@@ -1,7 +1,7 @@
 <!-- Header -->
 <div class="py-1 overflow-hidden d-flex justify-content-between border-bottom nav-create">
     <div class="mb-5 d-md-flex d-none align-self-center create ms-2 position-absolute">
-        <a href="#" class="d-flex">
+        <a href="{{ route('dashboard.index') }}" class="d-flex">
             <img src="{{ asset('assets/dashboard/images/group1000007853.png') }}" class="ms-md-3 mb-md-1" alt="logo" />
             <h4 class="text-center mt-md-1 me-5 me-md-5 ms-md-2">Book Render</h4>
         </a>

@@ -448,7 +448,7 @@ h6 {
 }
 /* user managment  */
 .img_managment2 {
-    background-image: url(../assets/Vector\\(1\).png);
+    background-image: url("/assets/admin/images/vector1.png");
     background-color: #d7edfd;
     height: 30vh;
     width: 100%;
@@ -1417,4 +1417,13 @@ a.active {
 .personal-notification img {
     width: 15%;
     height: 15%;
+}
+
+.pagination-container {
+    padding: 10px 15px;
+
+    > nav {
+        background: none;
+        box-shadow: none;
+    }
 }

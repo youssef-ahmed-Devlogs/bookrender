@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\AdminDashboard;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
@@ -9,7 +9,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
 
-class AdminDashboardController extends Controller
+class AdminController extends Controller
 {
     public function index()
     {

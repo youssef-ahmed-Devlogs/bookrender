@@ -16,8 +16,12 @@
     <link rel="stylesheet" href="{{ asset('assets/admin/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/css/style.css') }}">
 
-    <script defer src="{{ asset('assets/admin/js/bootstrap.bundle.min.js') }}"></script>
+    {{--
+    <script defer src="{{ asset('assets/admin/js/bootstrap.bundle.min.js') }}"></script> --}}
     <script src="{{asset('assets/admin/js/chart.js')}}"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
     <style>
         h1 {
             font-size:
