@@ -15,7 +15,7 @@
             @include('partials.dashboard.sidebar')
 
             <main class="col-md-11">
-                @include('partials.dashboard.header')
+                @include('partials.common.header')
 
                 {{ $slot }}
             </main>

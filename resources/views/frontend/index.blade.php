@@ -14,7 +14,7 @@
                             <h4 class="text-center mt-md-1 me-5 me-md-5 ms-md-2">CreateBook</h4>
                         </div>
                         <div>
-                            <a href="{{ route('register') }}" class=" text-decoration-none">
+                            <a href="{{ route('dashboard.index') }}" class=" text-decoration-none">
                                 <div class="d-flex align-items-center">
                                     <button class="mt-3 button-main">GET STARTED</button>
                                 </div>
@@ -27,7 +27,7 @@
                     <div class="col-md-6">
                         <div class="mt-5 home_info">
                             <h1>Create a book with our easy to use tool</h1>
-                            <a href="{{ route('register') }}" class=" text-decoration-none">
+                            <a href="{{ route('dashboard.index') }}" class=" text-decoration-none">
                                 <button class="mt-3 button-main ">LEARN MORE<i
                                         class="fa-solid fa-arrow-right ms-2"></i></button>
                             </a>
