@@ -83,7 +83,7 @@
             @include('partials.admin.sidebar')
 
             <!-- Main Content ms-sm-auto px-md-4 -->
-            <main class="col-md-11">
+            <main class="col-md-11 pb-5">
 
                 @include('partials.common.header')
 

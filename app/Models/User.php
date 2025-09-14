@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -25,6 +27,7 @@ class User extends Authenticatable
         'password',
         'agreement',
         'role',
+
     ];
 
     /**
@@ -64,7 +67,16 @@ class User extends Authenticatable
 
     public function subscriptions()
     {
-        return $this->hasMany(Subscription::class);
+        return $this->hasMany(Subscription::class)->latest();
+    }
+
+    public function activeSubscription()
+    {
+        return $this->hasMany(Subscription::class)
+            ->where('status', 'active')
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->latest();
     }
 
     public function projects()

@@ -99,7 +99,7 @@ class UserController extends Controller
         $settings = Setting::first();
 
         $freePlan = $plans->where('is_free', 1)->first();
-        $userSubscription = $user->subscriptions()->latest()->first();
+        $userSubscription = $user->activeSubscription()->first();
 
 
         return view('admin.users.edit', [
@@ -128,48 +128,36 @@ class UserController extends Controller
             'subscription' => 'required',
         ]);
 
-        $user = User::find($id);
+        $user = User::findOrFail($id);
 
-        if ($user) {
-            // تحديث بيانات المستخدم
-            $user->update([
-                'fname' => $request->fname,
-                'lname' => $request->lname,
-                'email' => $request->email,
-                'role' => $request->role,
-                'password' => $request->password ? bcrypt($request->password) : $user->password, // إذا لم يتم إدخال كلمة مرور جديدة، احتفظ بكلمة المرور القديمة
-            ]);
 
-            // التأكد إذا كان للمستخدم اشتراك بالفعل
-            $subscription = $user->subscriptions()->first(); // الحصول على الاشتراك المرتبط بالمستخدم
+        $user->update([
+            'fname' => $request->fname,
+            'lname' => $request->lname,
+            'email' => $request->email,
+            'role' => $request->role,
+            'password' => $request->password ? bcrypt($request->password) : $user->password, // إذا لم يتم إدخال كلمة مرور جديدة، احتفظ بكلمة المرور القديمة
+        ]);
 
-            if ($subscription) {
-                // إذا كان لديه اشتراك، قم بتحديثه
-                $subscription->update([
+        $subscription = $user->activeSubscription()->first();
+
+        if ($subscription?->id != $request->subscription) {
+            $user->subscriptions()->update(['status' => 'canceled']);
+
+            $user->subscriptions()->updateOrCreate(
+                [
+                    'user_id' => $user->id,
                     'plan_id' => $request->subscription,
+                ],
+                [
                     'start_date' => now(),
                     'end_date' => now()->addMonth(),
                     'status' => 'active',
-                ]);
-            } else {
-                // إذا لم يكن لديه اشتراك، قم بإنشاء اشتراك جديد
-                $user->subscriptions()->updateOrCreate(
-                    [
-                        'user_id' => $user->id,
-                        'plan_id' => $request->subscription, // التأكد من أن الـ plan_id يتوافق مع الـ user_id
-                    ],
-                    [
-                        'start_date' => now(),
-                        'end_date' => now()->addMonth(),
-                        'status' => 'active',
-                    ]
-                );
-            }
-
-            return redirect()->route('admin.users.index')->with('success', 'User updated successfully');
-        } else {
-            return redirect()->back()->with('error', 'User not found');
+                ]
+            );
         }
+
+        return redirect()->route('admin.users.index')->with('success', 'User updated successfully');
     }
 
     /**
