@@ -19,6 +19,7 @@ class Plan extends Model
         'paddle_price_id',
         'is_free'
     ];
+
     protected $casts = [
         'status' => 'string',
     ];
@@ -27,8 +28,4 @@ class Plan extends Model
     {
         return $this->hasMany(Subscription::class);
     }
-
-    // User.php
-
-
 }

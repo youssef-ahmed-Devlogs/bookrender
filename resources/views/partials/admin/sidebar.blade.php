@@ -28,29 +28,28 @@
         <p class="mb-4">User Management</p>
     </a>
 
-    {{-- <a href="{{ route('plans.index') }}" class="{{ request()->is('admin/plans*') ? 'active' : '' }}"
-        target="_self"> --}}
-        <a href="#" class="{{ request()->is('admin/plans*') ? 'active' : '' }}" target="_self">
-            <img src="{{ asset('assets/admin/images/vector2.png') }}" alt="Subscriptions">
-            <p class="mb-4">Subscriptions</p>
+    <a href="{{ route('admin.plans.index') }}" class="{{ request()->routeIs('admin.plans.*') ? 'active' : '' }}"
+        target="_self">
+        <img src="{{ asset('assets/admin/images/vector2.png') }}" alt="Subscriptions">
+        <p class="mb-4">Subscriptions</p>
+    </a>
+
+    {{-- <a href="{{ route('newsletters.index') }}" class="{{ request()->is('admin/newsletters') ? 'active' : '' }}">
+        --}}
+        <a href="#" class="{{ request()->is('admin/newsletters') ? 'active' : '' }}">
+            <img src="{{ asset('assets/admin/images/group1000008236.png') }}" alt="user managment">
+            <p class="mb-4">Newsletters </p>
         </a>
 
-        {{-- <a href="{{ route('newsletters.index') }}"
-            class="{{ request()->is('admin/newsletters') ? 'active' : '' }}"> --}}
-            <a href="#" class="{{ request()->is('admin/newsletters') ? 'active' : '' }}">
-                <img src="{{ asset('assets/admin/images/group1000008236.png') }}" alt="user managment">
-                <p class="mb-4">Newsletters </p>
+        {{-- <a href="{{ route('admin.setting') }}" class="{{ request()->is('admin/setting') ? 'active' : '' }}">
+            --}}
+            <a href="#" class="{{ request()->is('admin/setting') ? 'active' : '' }}">
+                <img src="{{ asset('assets/admin/images/group1000008236.png') }}" alt=" Settings">
+                <p class="mb-4"> Settings</p>
             </a>
 
-            {{-- <a href="{{ route('admin.setting') }}" class="{{ request()->is('admin/setting') ? 'active' : '' }}">
-                --}}
-                <a href="#" class="{{ request()->is('admin/setting') ? 'active' : '' }}">
-                    <img src="{{ asset('assets/admin/images/group1000008236.png') }}" alt=" Settings">
-                    <p class="mb-4"> Settings</p>
-                </a>
-
-                <form action="{{route('logout')}}" method="post">
-                    @csrf
-                    <button type="submit" class="mt-5 btn btn-danger">Logout</button>
-                </form>
+            <form action="{{route('logout')}}" method="post">
+                @csrf
+                <button type="submit" class="mt-5 btn btn-danger">Logout</button>
+            </form>
 </nav>
