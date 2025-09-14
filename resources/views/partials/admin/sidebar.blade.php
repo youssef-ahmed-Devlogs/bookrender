@@ -34,22 +34,22 @@
         <p class="mb-4">Subscriptions</p>
     </a>
 
-    {{-- <a href="{{ route('newsletters.index') }}" class="{{ request()->is('admin/newsletters') ? 'active' : '' }}">
+
+    <a href="{{ route('admin.newsletters.index') }}"
+        class="{{ request()->routeIs('admin.newsletters.*') ? 'active' : '' }}">
+        <img src="{{ asset('assets/admin/images/group1000008236.png') }}" alt="user managment">
+        <p class="mb-4">Newsletters </p>
+    </a>
+
+    {{-- <a href="{{ route('admin.setting') }}" class="{{ request()->is('admin/setting') ? 'active' : '' }}">
         --}}
-        <a href="#" class="{{ request()->is('admin/newsletters') ? 'active' : '' }}">
-            <img src="{{ asset('assets/admin/images/group1000008236.png') }}" alt="user managment">
-            <p class="mb-4">Newsletters </p>
+        <a href="#" class="{{ request()->is('admin/setting') ? 'active' : '' }}">
+            <img src="{{ asset('assets/admin/images/group1000008236.png') }}" alt=" Settings">
+            <p class="mb-4"> Settings</p>
         </a>
 
-        {{-- <a href="{{ route('admin.setting') }}" class="{{ request()->is('admin/setting') ? 'active' : '' }}">
-            --}}
-            <a href="#" class="{{ request()->is('admin/setting') ? 'active' : '' }}">
-                <img src="{{ asset('assets/admin/images/group1000008236.png') }}" alt=" Settings">
-                <p class="mb-4"> Settings</p>
-            </a>
-
-            <form action="{{route('logout')}}" method="post">
-                @csrf
-                <button type="submit" class="mt-5 btn btn-danger">Logout</button>
-            </form>
+        <form action="{{route('logout')}}" method="post">
+            @csrf
+            <button type="submit" class="mt-5 btn btn-danger">Logout</button>
+        </form>
 </nav>
