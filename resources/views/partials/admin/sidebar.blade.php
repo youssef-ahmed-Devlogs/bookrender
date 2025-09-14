@@ -41,15 +41,14 @@
         <p class="mb-4">Newsletters </p>
     </a>
 
-    {{-- <a href="{{ route('admin.setting') }}" class="{{ request()->is('admin/setting') ? 'active' : '' }}">
-        --}}
-        <a href="#" class="{{ request()->is('admin/setting') ? 'active' : '' }}">
-            <img src="{{ asset('assets/admin/images/group1000008236.png') }}" alt=" Settings">
-            <p class="mb-4"> Settings</p>
-        </a>
+    <a href="{{ route('admin.settings.logo-site') }}"
+        class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+        <img src="{{ asset('assets/admin/images/group1000008236.png') }}" alt=" Settings">
+        <p class="mb-4"> Settings</p>
+    </a>
 
-        <form action="{{route('logout')}}" method="post">
-            @csrf
-            <button type="submit" class="mt-5 btn btn-danger">Logout</button>
-        </form>
+    <form action="{{route('logout')}}" method="post">
+        @csrf
+        <button type="submit" class="mt-5 btn btn-danger">Logout</button>
+    </form>
 </nav>
