@@ -17,32 +17,32 @@
                     professional-quality books effortlessly — trusted by thousands of authors worldwide.</p>
 
                 <h5>Subscribe Our Newsletter</h5>
-                {{-- <form action="{{ route('newsletter.subscribe') }}" method="POST" class="mt-2 input-container"> --}}
-                    <form action="#" method="POST" class="mt-2 input-container">
-                        @csrf
-                        <input type="text" placeholder="Your Email" name="email">
-                        <button class="btn">Subscribe<i class="fa-solid fa-paper-plane fa-sm ms-2"></i></button>
-                    </form>
+                <form action="{{ route('newsletters.subscribe') }}" method="POST" class="mt-2 input-container">
+                    @csrf
 
-                    <div id="newsletter-message">
-                        @error('email')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
+                    <input type="text" placeholder="Your Email" name="email">
+                    <button class="btn">Subscribe<i class="fa-solid fa-paper-plane fa-sm ms-2"></i></button>
+                </form>
 
-                        @if (session('success'))
-                            <div class="text-success">{{ session('success') }}</div>
-                        @endif
-                    </div>
+                <div id="newsletter-message">
+                    @error('email')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+
+                    @if (session('success'))
+                        <div class="text-success">{{ session('success') }}</div>
+                    @endif
+                </div>
             </div>
             <div class="mt-3 footer2 mt-md-0">
                 <h5 class="pb-2">Company</h5>
                 <ul class="footer-links">
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Pricing Plan</a></li>
-                    <li><a href="#">Affiliate Program</a></li>
-                    <li><a href="#">Refund Policy</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms and Conditions</a></li>
+                    <li><a href="{{ route('about-us') }}">About Us</a></li>
+                    <li><a href="{{ route('pricing-plans') }}">Pricing Plan</a></li>
+                    <li><a href="{{ route('affiliate-program') }}">Affiliate Program</a></li>
+                    <li><a href="{{ route('refund-policy') }}">Refund Policy</a></li>
+                    <li><a href="{{ route('privacy-policy') }}">Privacy Policy</a></li>
+                    <li><a href="{{ route('terms-conditions') }}">Terms and Conditions</a></li>
                 </ul>
             </div>
             <div class="mt-3 footer3 mt-md-0">
