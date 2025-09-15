@@ -8,10 +8,10 @@
 
     </div>
     <div class="mt-3 info_nav d-flex align-self-center ms-lg-3 ms-md-5 ms-1">
-        <a href="#">
+        <a href="{{ route('about-us') }}">
             <p class="text-black ms-2 ms-md-5 ms-lg-5 font-weight">About Us</p>
         </a>
-        <a href="#">
+        <a href="{{ route('pricing-plans') }}">
             <p class="text-black ms-4 font-weight">Plan & Pricing</p>
         </a>
     </div>
@@ -81,11 +81,13 @@
                         </div>
 
                         <div class="p-4 info-personl border-bottom">
-                            <a href="#" class="{{ request()->is('profile') ? 'active' : '' }}">
+                            <a href="{{ route('dashboard.profile') }}"
+                                class="{{ request()->routeIs('dashboard.profile') ? 'active' : '' }}">
                                 <h4>My Profile</h4>
                             </a>
 
-                            <a href="#" class="mb-3 d-block h4">
+                            <a href="{{ route('dashboard.books.index') }}"
+                                class="{{ request()->routeIs('dashboard.books.*') ? 'active' : '' }} mb-3 d-block h4">
                                 <h4>My Projects</h4>
                             </a>
                             <h4 class="mb-3">Favorites</h4>

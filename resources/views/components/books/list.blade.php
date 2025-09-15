@@ -1,0 +1,58 @@
+@foreach ($books as $book)
+    <div class="col-3 rounded-3 book-item book-grid-item" style="position: relative;"
+        data-title="{{ strtolower($book->title) }}" data-second-title="{{ strtolower($book->second_title ?? '') }}"
+        data-full-title="{{ strtolower($book->title . ' ' . ($book->second_title ?? '')) }}"
+        data-date="{{ $book->created_at->timestamp }}" data-updated="{{ $book->updated_at->timestamp }}"
+        data-category="{{ strtolower($book->category ?? 'uncategorized') }}"
+        data-status="{{ strtolower($book->status ?? 'active') }}" data-year="{{ $book->created_at->year }}">
+
+
+        <img src="{{ asset('assets/common/images/default.png') }}" class="w-100 rounded-3 border-1 img-book" alt="book">
+
+
+        <div class="mt-2 d-flex justify-content-between">
+
+
+            <div class="btn-usermodel">
+                {{-- <button class="complete">14% Complete</button> --}}
+                {{-- <a href="{{ route('dashboard.book.edit', $book->id) }}"> --}}
+                    <a href="#">
+                        <button class="Editing">Editing</button>
+                    </a>
+            </div>
+            <div class="icon-usermodel d-flex justify-content-end align-items-center">
+                {{-- <form action="{{ route('dashboard.book.destroy', $book->id) }}" method="post"> --}}
+                    <form action="#" method="post">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="deleteBtn Editing bg-danger">delete</button>
+                    </form>
+
+                    <button class="mx-2 mt-1 Editing bg-success">
+                        {{-- <a href="{{ route('dashboard.chapter.create.custom', $book->id) }}"
+                            class="text-white text-decoration-none"> --}}
+                            <a href="#" class="text-white text-decoration-none">
+                                chapter
+                            </a>
+                    </button>
+
+                    <button class="mt-1 Editing bg-primary">
+                        {{-- <a href="{{ route('dashboard.book.show', $book->id) }}"
+                            class="text-white text-decoration-none"> --}}
+                            <a href="#" class="text-white text-decoration-none">
+
+                                view
+                            </a>
+
+                    </button>
+                    {{-- <i class="fa-solid fa-ellipsis-vertical fa-sm"></i> --}}
+            </div>
+        </div>
+        <div class="book-info">
+            <h3 class="mt-2 main-usermodel">
+                {{ Str::words($book->title . ': ' . $book->second_title, 18, '...') }}
+            </h3>
+            <p class="para-usermodel">Last Edit {{ $book->updated_at->diffForhumans() }} </p>
+        </div>
+    </div>
+@endforeach

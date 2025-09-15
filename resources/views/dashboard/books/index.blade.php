@@ -8,44 +8,26 @@
         </style>
     @endpush
 
-    <div class="dash-main position-relative">
-        <img src="{{ asset('assets/dashboard/images/vector5.png') }}" class="position-absolute" alt="" />
-        <img src="{{ asset('assets/dashboard/images/group1000008036.png') }}" class="position-absolute img-star"
+    <div class="img_managment2 position-relative">
+        <img src="{{ asset('assets/admin/images/vector5.png') }}" class="top-0 position-absolute" alt="" />
+
+        <h1 class="text-center w-100">My Projects</h1>
+
+        <a href="{{ route('dashboard.books.create') }}">
+            <button class="button_Adduser position-absolute z-1">
+                Start a New Book
+            </button>
+        </a>
+
+        <img src="{{ asset('assets/dashboard/images/group1000008036.png') }}" class="position-absolute img-star2"
             alt="star">
-
-        <div class="main-dashbordh1">
-            <h1 class="">Welcome</h1>
-            <h1 class="main-dashbord">{{ auth()->user()->fname . ' ' . auth()->user()->lname }}</h1>
-        </div>
-
-        <a href="#">
-            {{-- <a href="{{ route('dashboard.book.create') }}"> --}}
-                <button class="button_Adduser position-absolute z-1">
-                    Start a New Book
-                </button>
-            </a>
-
-            <a href="">
-                <button class="button_Adduser2 position-absolute z-1">Custom Writing</button>
-            </a>
-
-            <img src="{{ asset('assets/dashboard/images/vector21.png') }}" class="position-absolute img_line_dash"
-                alt="" />
-
-            <div class="pb-5 row z-2 position-absolute dash-row pb-md-0 ">
-                <div class="mt-5 col-lg-4 dash-book ps-md-4 me-md-4 me-3 mt-md-0 ">
-                    <h4>{{ $books->count() }}</h4>
-                    <p>Active Books</p>
-                </div>
-            </div>
-
-            <img src="{{ asset('assets/dashboard/images/group1000008036.png') }}" class="position-absolute img-star2"
-                alt="star">
-            <img src="{{ asset('assets/dashboard/images/vector20.png') }}" class="position-absolute img_line" alt="" />
-            <img src="{{ asset('assets/dashboard/images/group3.png') }}" class="position-absolute img_line2" alt="" />
-            <img src="{{ asset('assets/dashboard/images/vector4.png') }}" class="position-absolute img_line2" alt="" />
-            <img src="{{ asset('assets/dashboard/images/vector19.png') }}" class="position-absolute img_line3" alt="" />
+        <img src="{{ asset('assets/dashboard/images/vector20.png') }}" class="position-absolute img_line" alt="" />
+        <img src="{{ asset('assets/dashboard/images/group3.png') }}" class="position-absolute img_line2" alt="" />
+        <img src="{{ asset('assets/dashboard/images/vector4.png') }}" class="position-absolute img_line2" alt="" />
+        <img src="{{ asset('assets/dashboard/images/vector19.png') }}" class="position-absolute img_line3" alt="" />
     </div>
+
+
 
     <div class="container">
         <div class="mt-4 mb-3 d-flex justify-content-between">
@@ -89,7 +71,7 @@
 
         </div>
 
-        <div style="overflow-y: auto;height: 350px;">
+        <div style="overflow-x: hidden;overflow-y: auto;height: 450px;">
             <div class="row">
                 <x-books.list :books="$books" />
             </div>

@@ -1,11 +1,12 @@
 <!-- Sidebar -->
 <nav class="pt-2 text-center shadow col-md-1 d-none d-md-block sidebar position-relative">
-    <a href="#" class="{{ request()->is('dashboard') ? 'active' : '' }}">
+    <a href="{{ route('dashboard.index') }}" class="{{ request()->routeIs('dashboard.index') ? 'active' : '' }}">
         <img src="{{ asset('assets/dashboard/images/group1000007883.png') }}" class="" alt="Dashboard" />
         <p class="mb-3">Dashboard</p>
     </a>
 
-    <a href="#" class="{{ request()->is('book*') ? 'active' : '' }}">
+    <a href="{{ route('dashboard.books.index') }}"
+        class="{{ request()->routeIs('dashboard.books.*') ? 'active' : '' }}">
         <img src="{{ asset('assets/dashboard/images/vector13.png') }}" alt="my project" />
         <p class="mb-3">My Projects</p>
     </a>
@@ -14,8 +15,8 @@
         <p class="mb-3">Book Editor Access</p>
     </a>
 
-    <a href="#" class="{{ request()->is('profile') ? 'active' : '' }}">
-        <img src="{{ asset('assets/dashboard/images/group4.png') }}" alt="Content Management" />
+    <a href="{{ route('dashboard.profile') }}" class="{{ request()->routeIs('dashboard.profile') ? 'active' : '' }}">
+        <img src="{{ asset('assets/dashboard/images/group4.png') }}" alt="Profile Management" />
         <p class="mb-3">Profile Management</p>
     </a>
 
@@ -28,7 +29,8 @@
         <p class="mb-3">Notifications</p>
     </a>
 
-    <a href="#" class="{{ request()->is('help') ? 'active' : '' }}">
+    <a href="{{ route('dashboard.help-center') }}"
+        class="{{ request()->routeIs('dashboard.help-center') ? 'active' : '' }}">
         <img src="{{ asset('assets/dashboard/images/group6.png') }}" alt="Help Center" />
         <p class="mb-3">Help Center</p>
     </a>

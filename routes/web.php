@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dashboard\BookController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Frontend\FrontendController;
 use Illuminate\Support\Facades\Route;
@@ -10,6 +11,10 @@ Route::get('/', [FrontendController::class, 'index'])->name('home');
 Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::middleware('auth')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('index');
+        Route::get('profile', [DashboardController::class, 'profile'])->name('profile');
+        Route::get('help-center', [DashboardController::class, 'helpCenter'])->name('help-center');
+
+        Route::resource('books', BookController::class);
     });
 });
 

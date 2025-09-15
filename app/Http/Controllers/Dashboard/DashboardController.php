@@ -20,18 +20,18 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function edit()
+    public function profile()
     {
         $settings = Setting::first();
         $user = auth()->user();
 
-        return view('user.profile.profile', [
+        return view('dashboard.profile', [
             'settings' => $settings,
             'user' => $user
         ]);
     }
 
-    public function help()
+    public function helpCenter()
     {
         $settings = Setting::first();
 
@@ -40,7 +40,7 @@ class DashboardController extends Controller
             $builder->orWhere('answer', 'LIKE', '%' . request()->get('faq_search') . '%');
         })->paginate(3);
 
-        return view('user.help.help', [
+        return view('dashboard.help-center', [
             'settings' => $settings,
             'faqs' => $faqs,
         ]);
