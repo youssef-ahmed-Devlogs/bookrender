@@ -73,7 +73,8 @@
 
                                 <p>{{ auth()->user()->email }}</p>
 
-                                <a href="#" class="py-2 mb-2 text-white upgrade-button d-block">
+                                <a href="{{ route('dashboard.plans.index') }}"
+                                    class="py-2 mb-2 text-white upgrade-button d-block">
                                     Upgrade
                                     to<span class="p-md-1 ms-1">PRO</span>
                                 </a>

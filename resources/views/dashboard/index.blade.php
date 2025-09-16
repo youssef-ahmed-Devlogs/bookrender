@@ -138,4 +138,287 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        {{--
+        <script src="/user/user/js/mian.js"></script> --}}
+        {{--
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                fetch(`{{ route('dashboard.plans.check') }}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content')
+                    },
+                    credentials: 'same-origin'
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            alert(data.message);
+                        } else if (data.status === 'info') {
+                            console.log(data.message);
+                        } else {
+                            console.error('Unexpected response:', data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('There was an error with the request: ', error);
+                    });
+
+                // Sort functionality
+                const sortDropdown = document.querySelector('.sort-dropdown');
+                if (sortDropdown) {
+                    sortDropdown.addEventListener('click', function (e) {
+                        e.preventDefault();
+
+                        if (e.target.classList.contains('dropdown-item')) {
+                            const sortType = e.target.getAttribute('data-sort');
+                            sortBooks(sortType);
+
+                            // Update sort icon to show current sort
+                            const sortIcon = document.querySelector('.sort-icon');
+                            if (sortIcon) {
+                                sortIcon.className = 'fas fa-sort-amount-down me-4 pt-1 sort-icon';
+                                if (sortType.includes('desc')) {
+                                    sortIcon.className = 'fas fa-sort-amount-up me-4 pt-1 sort-icon';
+                                }
+                            }
+                        }
+                    });
+                }
+
+                function sortBooks(sortType) {
+                    // Target the specific row container that holds the books
+                    const booksContainer = document.querySelector('.container .row');
+                    if (!booksContainer) return;
+
+                    const bookItems = Array.from(booksContainer.querySelectorAll('.book-item'));
+
+                    bookItems.sort(function (a, b) {
+                        let aValue, bValue;
+
+                        switch (sortType) {
+                            case 'title-asc':
+                                aValue = a.getAttribute('data-title');
+                                bValue = b.getAttribute('data-title');
+                                return aValue.localeCompare(bValue);
+                            case 'title-desc':
+                                aValue = a.getAttribute('data-title');
+                                bValue = b.getAttribute('data-title');
+                                return bValue.localeCompare(aValue);
+                            case 'date-asc':
+                                aValue = parseInt(a.getAttribute('data-date'));
+                                bValue = parseInt(b.getAttribute('data-date'));
+                                return aValue - bValue;
+                            case 'date-desc':
+                                aValue = parseInt(a.getAttribute('data-date'));
+                                bValue = parseInt(b.getAttribute('data-date'));
+                                return bValue - aValue;
+                            case 'updated-asc':
+                                aValue = parseInt(a.getAttribute('data-updated'));
+                                bValue = parseInt(b.getAttribute('data-updated'));
+                                return aValue - bValue;
+                            case 'updated-desc':
+                                aValue = parseInt(a.getAttribute('data-updated'));
+                                bValue = parseInt(b.getAttribute('data-updated'));
+                                return bValue - aValue;
+                            default:
+                                return 0;
+                        }
+                    });
+
+                    // Remove all book items from container
+                    bookItems.forEach(item => {
+                        item.remove();
+                    });
+
+                    // Re-append sorted items to the container
+                    bookItems.forEach(item => {
+                        booksContainer.appendChild(item);
+                    });
+                }
+
+                // View toggle functionality
+                const viewDropdown = document.querySelector('.view-dropdown');
+                const booksContainer = document.querySelector('.row');
+                let currentView = 'grid'; // Default view
+
+                if (viewDropdown && booksContainer) {
+                    viewDropdown.addEventListener('click', function (e) {
+                        e.preventDefault();
+
+                        if (e.target.classList.contains('dropdown-item')) {
+                            const viewType = e.target.getAttribute('data-view');
+                            toggleView(viewType);
+
+                            // Update view icon
+                            const viewIcon = document.querySelector('.view-toggle-icon');
+                            if (viewIcon) {
+                                if (viewType === 'list') {
+                                    viewIcon.className = 'fas fa-th-large me-4 pt-1 view-toggle-icon';
+                                } else {
+                                    viewIcon.className = 'fas fa-list me-4 pt-1 view-toggle-icon';
+                                }
+                            }
+                        }
+                    });
+                }
+
+                function toggleView(viewType) {
+                    const bookItems = document.querySelectorAll('.book-item');
+
+                    bookItems.forEach(item => {
+                        if (viewType === 'list') {
+                            item.classList.remove('book-grid-item');
+                            item.classList.add('book-list-item');
+                            item.classList.remove('col-3');
+                            item.classList.add('col-12');
+                        } else {
+                            item.classList.remove('book-list-item');
+                            item.classList.add('book-grid-item');
+                            item.classList.remove('col-12');
+                            item.classList.add('col-3');
+                        }
+                    });
+
+                    currentView = viewType;
+                }
+
+                // Filter functionality
+                const applyFilterBtn = document.getElementById('applyFilter');
+                const clearFilterBtn = document.getElementById('clearFilter');
+                const filterModal = document.getElementById('filterModal');
+                const titleFilterInput = document.getElementById('titleFilter');
+                let originalBooks = [];
+
+                // Store original books on page load
+                originalBooks = Array.from(document.querySelectorAll('.book-item')).map(item => item.cloneNode(true));
+
+                // Real-time title filtering
+                if (titleFilterInput) {
+                    titleFilterInput.addEventListener('input', function () {
+                        applyFilters();
+                    });
+                }
+
+                if (applyFilterBtn) {
+                    applyFilterBtn.addEventListener('click', function () {
+                        applyFilters();
+                        const modal = bootstrap.Modal.getInstance(filterModal);
+                        if (modal) {
+                            modal.hide();
+                        }
+                    });
+                }
+
+                if (clearFilterBtn) {
+                    clearFilterBtn.addEventListener('click', function () {
+                        clearFilters();
+                        const modal = bootstrap.Modal.getInstance(filterModal);
+                        if (modal) {
+                            modal.hide();
+                        }
+                    });
+                }
+
+                function applyFilters() {
+                    const titleFilter = document.getElementById('titleFilter').value.toLowerCase().trim();
+                    const yearFilter = document.getElementById('yearFilter').value;
+                    const dateRangeFilter = document.getElementById('dateRangeFilter').value;
+
+                    const bookItems = document.querySelectorAll('.book-item');
+                    const booksContainer = document.querySelector('.row');
+
+                    bookItems.forEach(item => {
+                        let showItem = true;
+
+                        // Title filter - search across multiple title fields
+                        if (titleFilter) {
+                            const mainTitle = item.getAttribute('data-title') || '';
+                            const secondTitle = item.getAttribute('data-second-title') || '';
+                            const fullTitle = item.getAttribute('data-full-title') || '';
+
+                            // Check if any of the title fields contain the search term
+                            const titleMatch = mainTitle.includes(titleFilter) ||
+                                secondTitle.includes(titleFilter) ||
+                                fullTitle.includes(titleFilter);
+
+                            if (!titleMatch) {
+                                showItem = false;
+                            }
+                        }
+
+                        // Year filter
+                        if (yearFilter && showItem) {
+                            const year = item.getAttribute('data-year');
+                            if (year !== yearFilter) {
+                                showItem = false;
+                            }
+                        }
+
+                        // Date range filter
+                        if (dateRangeFilter && showItem) {
+                            const itemDate = new Date(parseInt(item.getAttribute('data-date')) * 1000);
+                            const now = new Date();
+
+                            switch (dateRangeFilter) {
+                                case 'today':
+                                    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                                    if (itemDate < today) showItem = false;
+                                    break;
+                                case 'week':
+                                    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                                    if (itemDate < weekAgo) showItem = false;
+                                    break;
+                                case 'month':
+                                    const monthAgo = new Date(now.getFullYear(), now.getMonth(), 1);
+                                    if (itemDate < monthAgo) showItem = false;
+                                    break;
+                                case 'year':
+                                    const yearStart = new Date(now.getFullYear(), 0, 1);
+                                    if (itemDate < yearStart) showItem = false;
+                                    break;
+                            }
+                        }
+
+                        if (showItem) {
+                            item.style.display = '';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+
+                    // Update filter icon to show active state
+                    const filterIcon = document.querySelector('.filter-icon');
+                    if (filterIcon && (titleFilter || yearFilter || dateRangeFilter)) {
+                        filterIcon.style.color = '#007bff';
+                    }
+                }
+
+                function clearFilters() {
+                    document.getElementById('titleFilter').value = '';
+                    document.getElementById('yearFilter').value = '';
+                    document.getElementById('dateRangeFilter').value = '';
+
+                    const bookItems = document.querySelectorAll('.book-item');
+                    bookItems.forEach(item => {
+                        item.style.display = '';
+                    });
+
+                    // Reset filter icon
+                    const filterIcon = document.querySelector('.filter-icon');
+                    if (filterIcon) {
+                        filterIcon.style.color = '';
+                    }
+                }
+            });
+        </script>
+        {{--
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> --}}
+    @endpush
 </x-layouts.dashboard.app>

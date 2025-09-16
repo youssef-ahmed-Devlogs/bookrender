@@ -16,6 +16,7 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('help-center', [DashboardController::class, 'helpCenter'])->name('help-center');
 
         Route::resource('books', BookController::class);
+        Route::post('plans/check', [PlanController::class, 'checkAndUpdateSubscription'])->name('plans.check');
         Route::resource('plans', PlanController::class);
     });
 });
