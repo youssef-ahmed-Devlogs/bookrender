@@ -8,6 +8,7 @@ use App\Models\Chapter;
 use App\Models\Project;
 use App\Models\Setting;
 use App\Services\BookService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
@@ -289,7 +290,7 @@ class BookController extends Controller
         }
 
         // Handle PDF and PDF Print
-        $pdf = Pdf::loadView('user.book.export', compact('project', 'chapters'));
+        $pdf = Pdf::loadView('dashboard.books.export', compact('project', 'chapters'));
 
         if ($project->format === 'PDF Print') {
             // Additional settings for print if necessary
