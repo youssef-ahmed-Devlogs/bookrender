@@ -18,7 +18,7 @@
             <h1 class="main-dashbord">{{ auth()->user()->fname . ' ' . auth()->user()->lname }}</h1>
         </div>
 
-        <a href="#">
+        <a href="{{ route('dashboard.books.create') }}">
             {{-- <a href="{{ route('dashboard.book.create') }}"> --}}
                 <button class="button_Adduser position-absolute z-1">
                     Start a New Book

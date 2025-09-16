@@ -15,37 +15,33 @@
 
             <div class="btn-usermodel">
                 {{-- <button class="complete">14% Complete</button> --}}
-                {{-- <a href="{{ route('dashboard.book.edit', $book->id) }}"> --}}
-                    <a href="#">
-                        <button class="Editing">Editing</button>
-                    </a>
+                <a href="{{ route('dashboard.books.edit', $book->id) }}">
+                    <button class="Editing">Editing</button>
+                </a>
             </div>
             <div class="icon-usermodel d-flex justify-content-end align-items-center">
-                {{-- <form action="{{ route('dashboard.book.destroy', $book->id) }}" method="post"> --}}
-                    <form action="#" method="post">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="deleteBtn Editing bg-danger">delete</button>
-                    </form>
+                <form action="{{ route('dashboard.books.destroy', $book->id) }}" method="post">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="deleteBtn Editing bg-danger">delete</button>
+                </form>
 
-                    <button class="mx-2 mt-1 Editing bg-success">
-                        {{-- <a href="{{ route('dashboard.chapter.create.custom', $book->id) }}"
-                            class="text-white text-decoration-none"> --}}
-                            <a href="#" class="text-white text-decoration-none">
-                                chapter
-                            </a>
-                    </button>
+                <button class="mx-2 mt-1 Editing bg-success">
+                    <a href="{{ route('dashboard.chapter.create.custom', $book->id) }}"
+                        class="text-white text-decoration-none">
+                        chapter
+                    </a>
+                </button>
 
-                    <button class="mt-1 Editing bg-primary">
-                        {{-- <a href="{{ route('dashboard.book.show', $book->id) }}"
-                            class="text-white text-decoration-none"> --}}
-                            <a href="#" class="text-white text-decoration-none">
+                <button class="mt-1 Editing bg-primary">
+                    <a href="{{ route('dashboard.books.show', $book->id) }}" class="text-white text-decoration-none">
 
-                                view
-                            </a>
 
-                    </button>
-                    {{-- <i class="fa-solid fa-ellipsis-vertical fa-sm"></i> --}}
+                        view
+                    </a>
+
+                </button>
+                {{-- <i class="fa-solid fa-ellipsis-vertical fa-sm"></i> --}}
             </div>
         </div>
         <div class="book-info">

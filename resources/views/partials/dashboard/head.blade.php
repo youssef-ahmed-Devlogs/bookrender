@@ -20,6 +20,7 @@
 
 <link rel="stylesheet" href="{{ asset('assets/dashboard/css/all.min.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/dashboard/css/bootstrap.min.css') }}" />
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 <link rel="stylesheet" href="{{ asset('assets/dashboard/css/style.css') }}" />
 
 <style>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AdminAuthorizeRedirect;
+use App\Http\Middleware\ReachedMaximumBooks;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -14,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'admin-authorize' => AdminAuthorizeRedirect::class,
+            'reached-maximum-books' => ReachedMaximumBooks::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
