@@ -31,7 +31,7 @@
 
         <div class="ms-4 d-flex me-3">
 
-            <a href="#" class="align-self-center">
+            <a href="{{ route('dashboard.help-center') }}" class="align-self-center">
                 <i class="fa-regular img_nav fa-circle-question me-2 align-self-center ps-3"></i>
             </a>
 
@@ -94,7 +94,7 @@
                             <a href="#" class="mb-3 d-block h4">
                                 <h4>Manage Membership</h4>
                             </a>
-                            <a href="#" class="mb-3 d-block h4">
+                            <a href="{{ route('dashboard.help-center') }}" class="mb-3 d-block h4">
                                 <h4>Help</h4>
                             </a>
 
