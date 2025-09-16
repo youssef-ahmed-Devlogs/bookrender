@@ -19,7 +19,7 @@
     <div class="btn_nav d-flex justify-content-between">
         <form action="#" id="main-search-form"
             class="button-container d-flex justify-content-center align-items-center me-2 ms-sm-5">
-            <a href="#" class="text-white upgrade-button me-3">
+            <a href="{{ route('dashboard.plans.index') }}" class="text-white upgrade-button me-3">
                 Upgrade to<span class="p-md-1 ms-1">PRO</span>
             </a>
 
@@ -90,8 +90,10 @@
                                 class="{{ request()->routeIs('dashboard.books.*') ? 'active' : '' }} mb-3 d-block h4">
                                 <h4>My Projects</h4>
                             </a>
+
                             <h4 class="mb-3">Favorites</h4>
-                            <a href="#" class="mb-3 d-block h4">
+
+                            <a href="{{ route('dashboard.plans.index') }}" class="mb-3 d-block h4">
                                 <h4>Manage Membership</h4>
                             </a>
                             <a href="{{ route('dashboard.help-center') }}" class="mb-3 d-block h4">

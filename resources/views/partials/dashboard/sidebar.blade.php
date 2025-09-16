@@ -20,7 +20,8 @@
         <p class="mb-3">Profile Management</p>
     </a>
 
-    <a href="#" class="{{ request()->is('plans*') ? 'active' : '' }}">
+    <a href="{{ route('dashboard.plans.index') }}"
+        class="{{ request()->routeIs('dashboard.plans.*') ? 'active' : '' }}">
         <img src="{{ asset('assets/dashboard/images/group5.png') }}" alt="Subscription Information" />
         <p class="mb-3">Subscription Information</p>
     </a>

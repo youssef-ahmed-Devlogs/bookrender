@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dashboard\PlanController;
 use App\Http\Controllers\Dashboard\BookController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Frontend\FrontendController;
@@ -15,6 +16,7 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('help-center', [DashboardController::class, 'helpCenter'])->name('help-center');
 
         Route::resource('books', BookController::class);
+        Route::resource('plans', PlanController::class);
     });
 });
 
