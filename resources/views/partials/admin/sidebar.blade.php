@@ -16,6 +16,10 @@
         .sidebar a.active p {
             color: #0c9bf3 !important;
         }
+
+        .sidebar a img {
+            width: 22px;
+        }
     </style>
 
     <a href="{{ route('admin.index') }}" class="{{ request()->is('admin') ? 'active' : '' }}">
@@ -39,6 +43,11 @@
         class="{{ request()->routeIs('admin.newsletters.*') ? 'active' : '' }}">
         <img src="{{ asset('assets/admin/images/group1000008236.png') }}" alt="user managment">
         <p class="mb-4">Newsletters </p>
+    </a>
+
+    <a href="{{ route('admin.ratings.index') }}" class="{{ request()->routeIs('admin.ratings.*') ? 'active' : '' }}">
+        <img src="{{ asset('assets/admin/images/star-solid-full.svg') }}" alt=" Ratings">
+        <p class="mb-4"> Ratings</p>
     </a>
 
     <a href="{{ route('admin.settings.logo-site') }}"

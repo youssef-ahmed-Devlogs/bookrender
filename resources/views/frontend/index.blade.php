@@ -116,22 +116,13 @@
 
                         <div class="overflow-hidden col-10">
                             <div class="transition slider-track d-flex">
-                                <div class="px-2 col-md-6">
-                                    <img src="{{ asset('assets/frontend/images/group54.png') }}" class="w-100"
-                                        alt="comment">
-                                </div>
-                                <div class="px-2 col-md-6">
-                                    <img src="{{ asset('assets/frontend/images/group53.png') }}" class="w-100"
-                                        alt="comment">
-                                </div>
-                                <div class="px-2 col-md-6">
-                                    <img src="{{ asset('assets/frontend/images/group54.png') }}" class="w-100"
-                                        alt="comment">
-                                </div>
-                                <div class="px-2 col-md-6">
-                                    <img src="{{ asset('assets/frontend/images/group53.png') }}" class="w-100"
-                                        alt="comment">
-                                </div>
+
+                                @foreach (\App\Models\Rating::limit(10)->get() as $rating)
+                                    <div class="px-2 col-md-6">
+                                        <img src="{{ asset("storage/{$rating->image}") }}" class="w-100" alt="comment">
+                                    </div>
+                                @endforeach
+
                             </div>
                         </div>
 
