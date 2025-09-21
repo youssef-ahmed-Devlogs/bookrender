@@ -19,7 +19,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin-authorize'])-
 
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('logo-site', [SettingController::class, 'logoSite'])->name('logo-site');
-        // Route::put('logo-site', [SettingController::class, 'updateLogoSite']);
         route::put('upload-logos', [SettingController::class, 'uploadLogos'])->name('upload-logos');
 
         Route::get('font-colors', [SettingController::class, 'fontColors'])->name('font-colors');

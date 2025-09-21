@@ -5,7 +5,6 @@ use App\Http\Controllers\Dashboard\BookController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Frontend\FrontendController;
 use Illuminate\Support\Facades\Route;
-use Livewire\Volt\Volt;
 
 Route::get('/', [FrontendController::class, 'index'])->name('home');
 

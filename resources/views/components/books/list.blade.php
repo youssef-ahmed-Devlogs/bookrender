@@ -1,5 +1,5 @@
 @foreach ($books as $book)
-    <div class="col-3 rounded-3 book-item book-grid-item" style="position: relative;"
+    <div class="col-lg-3 rounded-3 book-item book-grid-item mb-3" style="position: relative;"
         data-title="{{ strtolower($book->title) }}" data-second-title="{{ strtolower($book->second_title ?? '') }}"
         data-full-title="{{ strtolower($book->title . ' ' . ($book->second_title ?? '')) }}"
         data-date="{{ $book->created_at->timestamp }}" data-updated="{{ $book->updated_at->timestamp }}"
@@ -7,7 +7,8 @@
         data-status="{{ strtolower($book->status ?? 'active') }}" data-year="{{ $book->created_at->year }}">
 
 
-        <img src="{{ asset('assets/common/images/default.png') }}" class="w-100 rounded-3 border-1 img-book" alt="book">
+        <img src="{{ $book->cover() }}" class="w-100 rounded-3 border-1 img-book" alt="book"
+            style="width:302.25px;height:302.25px;object-fit:cover">
 
 
         <div class="mt-2 d-flex justify-content-between">

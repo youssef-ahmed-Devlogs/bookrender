@@ -25,9 +25,11 @@
                 </button>
             </a>
 
-            <a href="">
-                <button class="button_Adduser2 position-absolute z-1">Custom Writing</button>
-            </a>
+            @if (session()->has('last_book'))
+                <a href="{{ route('dashboard.books.show', session()->get('last_book')) }}">
+                    <button class="button_Adduser2 position-absolute z-1">Resume Writing</button>
+                </a>
+            @endif
 
             <img src="{{ asset('assets/dashboard/images/vector21.png') }}" class="position-absolute img_line_dash"
                 alt="" />

@@ -1,3 +1,15 @@
+<style>
+    @media(max-width: 500px) {
+        .info_nav {
+            display: none !important;
+        }
+
+        .main-search {
+            width: 70% !important;
+        }
+    }
+</style>
+
 <!-- Header -->
 <div class="py-1 overflow-hidden d-flex justify-content-between border-bottom nav-create">
     <div class="mb-5 d-md-flex d-none align-self-center create ms-2 position-absolute">

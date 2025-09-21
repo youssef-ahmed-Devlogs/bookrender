@@ -142,6 +142,8 @@ class BookController extends Controller
 
         $isPreview = $request->has('preview');
 
+        session()->put('last_book', $id);
+
         return view('dashboard.books.editor', [
             'project' => $project,
             'chapters' => $filteredChapters,

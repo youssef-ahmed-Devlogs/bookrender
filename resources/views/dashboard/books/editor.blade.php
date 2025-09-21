@@ -17,6 +17,10 @@
 
 
     <style>
+        body {
+            overflow: hidden;
+        }
+
         /* Dynamically scale editor / preview based on chosen Treem size */
         .page-preview {
             width: {{ $dimensions['w'] }}px;
@@ -24,7 +28,7 @@
             border: 1px solid #e0e0e0;
             background: #ffffff;
             margin: 0 auto;
-            overflow-y: auto;
+            /* overflow-y: auto; */
             box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
         }
 
@@ -34,8 +38,10 @@
             height: {{ $dimensions['h'] }}px;
             overflow-y: auto;
             padding: 20px 40px;
+            padding-bottom: 120px;
             /* inner margin for text */
             box-sizing: border-box;
+            background-color: #fff;
         }
 
         .preview-area {
@@ -84,6 +90,7 @@
             overflow-y: auto;
             overflow-x: hidden;
         }
+
     </style>
     @endpush
 
@@ -605,5 +612,12 @@
             projectTitleInput.setAttribute('readonly', true);
         })
     </script>
+
+
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+</script>
     @endpush
 </x-layouts.dashboard.app>

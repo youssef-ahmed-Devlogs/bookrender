@@ -10,10 +10,14 @@
         <img src="{{ asset('assets/dashboard/images/vector13.png') }}" alt="my project" />
         <p class="mb-3">My Projects</p>
     </a>
-    <a href="#" class="{{ request()->is('editor*') ? 'active' : '' }}">
-        <img src="{{ asset('assets/dashboard/images/vector21.svg') }}" alt="Book Editor Access" />
-        <p class="mb-3">Book Editor Access</p>
-    </a>
+
+    @if (session()->has('last_book'))
+        <a href="{{ route('dashboard.books.show', session()->get('last_book')) }}"
+            class="{{ request()->is('editor*') ? 'active' : '' }}">
+            <img src="{{ asset('assets/dashboard/images/vector21.svg') }}" alt="Book Editor Access" />
+            <p class="mb-3">Book Editor Access</p>
+        </a>
+    @endif
 
     <a href="{{ route('dashboard.profile') }}" class="{{ request()->routeIs('dashboard.profile') ? 'active' : '' }}">
         <img src="{{ asset('assets/dashboard/images/group4.png') }}" alt="Profile Management" />
