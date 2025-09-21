@@ -10,6 +10,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Volt\Component;
+use App\Mail\OTPMail;
 
 new #[Layout('components.layouts.auth.app')] class extends Component {
     #[Validate('required|string|email')]
@@ -40,13 +41,20 @@ new #[Layout('components.layouts.auth.app')] class extends Component {
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();
 
-        $routeName = 'dashboard.index';
+        $user = auth()->user();
 
-        if (auth()->user()->role === 'admin') {
-            $routeName = 'admin.index';
-        }
+        $user->otp = rand(111111, 999999);
+        $user->otp_verified_at = NULL;
+        $user->otp_expired_at = now()->addMinutes(10);
 
-        $this->redirectIntended(default: route($routeName, absolute: false));
+        // Send otp in the email
+
+        Mail::to($user->email)->send(new OTPMail($user, $user->otp));
+
+        $user->save();
+
+        $this->redirectIntended(default: route('otp', absolute: false));
+
     }
 
     /**

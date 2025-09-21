@@ -27,7 +27,9 @@ class User extends Authenticatable
         'password',
         'agreement',
         'role',
-
+        'otp',
+        'otp_verified_at',
+        'otp_expired_at',
     ];
 
     /**
@@ -87,5 +89,10 @@ class User extends Authenticatable
     public function books()
     {
         return $this->hasMany(Project::class);
+    }
+
+    public function otpVerified(): bool
+    {
+        return !is_null($this->otp_verified_at);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AdminAuthorizeRedirect;
+use App\Http\Middleware\OTP;
 use App\Http\Middleware\ReachedMaximumBooks;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -16,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin-authorize' => AdminAuthorizeRedirect::class,
             'reached-maximum-books' => ReachedMaximumBooks::class,
+            'otp' => OTP::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
