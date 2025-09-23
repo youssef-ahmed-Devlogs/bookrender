@@ -10,6 +10,10 @@ use App\Models\Setting;
 use App\Services\BookService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\IOFactory;
 
 class BookController extends Controller
 {
@@ -52,78 +56,102 @@ class BookController extends Controller
         return view('dashboard.books.create');
     }
 
+    // The request example
+    //  [
+    //   "title" => "The good boy"
+    //   "author" => "Mr. Joo"
+    //   "description" => "boy life"
+    //   "treem_size" => "5" x 8"" // the trim size
+    //   "page_count" => "180"
+    //   "format" => "PDF"
+    //   "bleed_file" => "Yes"
+    //   "category" => "Fantasy"
+    //   "chapters" => "Chapter 1,Chapter 2,Chabter 3"
+    //   "text_style" => "A"
+    //   "font_size" => "14"
+    //   "add_page_num" => "Yes"
+    //   "book_intro" => "Yes"
+    //   "copyright_page" => "Yes"
+    //   "table_of_contents" => "Yes"
+    // ]
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreBookRequest $request)
     {
-        session([
-            'project_id' => null,
-            'generated_content' => []
-        ]);
+        try {
+            // Clear any existing session data
+            session([
+                'project_id' => null,
+                'generated_content' => []
+            ]);
 
-        $user = auth()->user();
+            $user = auth()->user();
+            $bookService = new BookService();
 
-        $bookService = new BookService();
-        $response = $bookService->sendPrompt($request->all());
+            // Generate book content using the improved service
+            $generatedContent = $bookService->generateBookContent($request->all());
 
+            if (empty($generatedContent)) {
+                return redirect()->route('dashboard.books.create')
+                    ->with('error', 'Failed to generate book content. Please try again.');
+            }
 
+            // Calculate word count for quota checking
+            $totalWordCount = 0;
+            foreach ($generatedContent as $section) {
+                $totalWordCount += str_word_count(strip_tags($section['content']));
+            }
 
-        if ($response->successful()) {
-            $text = $response->json()['choices'][0]['text'] ?? '';
-
-            // --- 1. Check Quota BEFORE Creating the Project ---
-            $wordCount = str_word_count(strip_tags($text));
-            $subscription = $user->subscriptions->first(); // Assuming one subscription
+            // Check quota before creating the project
+            $subscription = $user->subscriptions->first();
             $wordLimit = $subscription->plan->word_number ?? 0;
             $usedWords = $subscription->used_words ?? 0;
             $remainingWords = $wordLimit - $usedWords;
 
-            if ($wordCount > $remainingWords) {
-                return redirect()->route('dashboard.books.index')->with('error', 'Your remaining word limit is not enough to generate this content.');
+            if ($totalWordCount > $remainingWords) {
+                return redirect()->route('dashboard.books.index')
+                    ->with('error', 'Your remaining word limit is not enough to generate this content. Required: ' . $totalWordCount . ' words, Available: ' . $remainingWords . ' words.');
             }
 
-            // --- 2. Create Project and Update Quota AFTER successful check ---
+            // Create the project
             $project = $bookService->create($request);
 
-
-
-            $subscription->used_words = $usedWords + $wordCount;
+            // Update subscription usage
+            $subscription->used_words = $usedWords + $totalWordCount;
             $subscription->used_books += 1;
             $subscription->save();
 
-            // --- 3. Pass Generated Content to Session ---
-            $sectionPattern = '/Title:(.*?)Content:(.*?)(?=Title:|$)/s';
-            preg_match_all($sectionPattern, $text, $matches, PREG_SET_ORDER);
-
-            $generatedContent = [];
-            foreach ($matches as $match) {
-                $title = trim($match[1]);
-                $content = trim($match[2]);
-                $generatedContent[] = ['title' => $title, 'content' => $content];
-            }
-
+            // Store generated content in session for preview
             session([
                 'project_id' => $project->id,
                 'generated_content' => $generatedContent
             ]);
 
+            // Save chapters to database
             foreach ($generatedContent as $chapterData) {
                 Chapter::create([
                     'project_id' => $project->id,
                     'title' => $chapterData['title'],
                     'content' => $chapterData['content'],
+                    'type' => $chapterData['type'] ?? 'chapter',
+                    'chapter_number' => $chapterData['chapter_number'] ?? null,
                 ]);
             }
 
             if ($request->submit_type === 'save_close') {
-                return redirect()->route('dashboard.books.index');
+                return redirect()->route('dashboard.books.index')
+                    ->with('success', 'Book created successfully!');
             }
 
-            return redirect()->route('dashboard.showpredict', ['project_id' => $project->id]);
+            return redirect()->route('dashboard.showpredict', ['project_id' => $project->id])
+                ->with('success', 'Book generated successfully!');
+        } catch (\Exception $e) {
+            Log::error('Error creating book: ' . $e->getMessage());
+            return redirect()->route('dashboard.books.create')
+                ->with('error', 'An error occurred while creating the book. Please try again.');
         }
-
-        return redirect()->route('dashboard.books.create')->with('error', 'Failed to generate book content. Please try again.');
     }
 
 
