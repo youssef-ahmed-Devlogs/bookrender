@@ -22,12 +22,8 @@
 
             /* Dynamically scale editor / preview based on chosen Treem size */
             .page-preview {
-                width:
-                    {{ $dimensions['w'] }}
-                    px;
-                height:
-                    {{ $dimensions['h'] }}
-                    px;
+                width: {{ $dimensions['w'] }}px;
+                height: {{ $dimensions['h'] }}px;
                 border: 1px solid #e0e0e0;
                 background: #ffffff;
                 margin: 0 auto;
@@ -36,15 +32,9 @@
             }
 
             .page-preview .ql-editor {
-                width:
-                    {{ $dimensions['w'] }}
-                    px;
-                min-height:
-                    {{ $dimensions['h'] }}
-                    px;
-                height:
-                    {{ $dimensions['h'] }}
-                    px;
+                width: {{ $dimensions['w'] }}px;
+                min-height: {{ $dimensions['h'] }}px;
+                height: {{ $dimensions['h'] }}px;
                 overflow-y: auto;
                 padding: 20px 40px;
                 padding-bottom: 120px;
@@ -73,7 +63,7 @@
             .editor-container {
                 max-height: 80vh;
                 /* overflow-y: auto;
-                                                    overflow-x: hidden; */
+                                                                    overflow-x: hidden; */
             }
 
             /* AI Sidebar scrolling */
@@ -99,6 +89,7 @@
                 overflow-y: auto;
                 overflow-x: hidden;
             }
+
         </style>
     @endpush
 
@@ -558,9 +549,9 @@
                 const prompt =
                     `You are an expert book writer. Here are the current and previous chapters for context:\n${context}\n\nNow, based on the above, generate ONLY the next part of the story. Do NOT repeat previous content. Do NOT include any titles or summaries. The following is a description or instruction for what should happen next: "${userInput}". Write only the new story text that follows.
 
-                    do not give the result as a code block
+                                    do not give the result as a code block
 
-                    `;
+                                    `;
 
 
 
