@@ -3,6 +3,30 @@
     @push('styles')
         <!-- Quill Snow theme -->
         <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+        
+        <!-- Custom styles for better underline visibility -->
+        <style>
+            /* Enhance underline visibility in Quill editor */
+            .ql-editor [style*="text-decoration: underline"],
+            .ql-editor u {
+                text-decoration: underline !important;
+                text-decoration-thickness: 1px !important;
+                text-underline-offset: 2px !important;
+            }
+            
+            /* Ensure underline is visible in preview mode */
+            .preview-area [style*="text-decoration: underline"],
+            .preview-area u {
+                text-decoration: underline !important;
+                text-decoration-thickness: 1px !important;
+                text-underline-offset: 2px !important;
+            }
+            
+            /* Make sure underline button shows active state */
+            .ql-toolbar .ql-underline.ql-active {
+                color: #06c !important;
+            }
+        </style>
 
         @php
             $sizeMap = [
@@ -385,9 +409,17 @@
                 const FontSizeBlockStyle = new Parchment.Attributor.Style('fontsize', 'font-size', { scope: Parchment.Scope.BLOCK });
                 const LineHeightStyle = new Parchment.Attributor.Style('lineheight', 'line-height', { scope: Parchment.Scope.BLOCK });
                 const MarginStyle = new Parchment.Attributor.Style('margin', 'margin', { scope: Parchment.Scope.BLOCK });
+                
+                // Custom underline format that uses CSS instead of <u> tags
+                const UnderlineStyle = new Parchment.Attributor.Style('underline', 'text-decoration', {
+                    scope: Parchment.Scope.INLINE,
+                    whitelist: ['underline']
+                });
+                
                 Quill.register(FontSizeBlockStyle, true);
                 Quill.register(LineHeightStyle, true);
                 Quill.register(MarginStyle, true);
+                Quill.register(UnderlineStyle, true);
             }
 
             function addClipboardMatcherPreserveStyles(quillInstance) {

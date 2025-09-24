@@ -139,9 +139,11 @@ class BookService
         $spaceMd = (int) round($base * 1.25);
         $spaceLg = (int) round($base * 2.0);
 
+        $headingStyle = $this->getHeadingStyleCss();
+        
         $content = "
             <div class='copyright-page'>
-                <h1 style=\"font-size: {$sizes['h1']}px; line-height: {$lhHead}; margin: {$spaceLg}px 0 {$spaceMd}px; text-align: center;\">{$title}</h1>
+                <h1 style=\"font-size: {$sizes['h1']}px; line-height: {$lhHead}; margin: {$spaceLg}px 0 {$spaceMd}px; text-align: center; {$headingStyle}\">{$title}</h1>
                 <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: center;\">Copyright © {$currentYear} by {$author}</p>
                 <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: justify;\">All rights reserved. No part of this book may be reproduced, distributed, or transmitted in any form or by any means, including photocopying, recording, or other electronic or mechanical methods, without the prior written permission of the publisher, except in the case of brief quotations embodied in critical reviews and certain other noncommercial uses permitted by copyright law.</p>
                 <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: justify;\">For permission requests, write to the publisher, addressed 'Attention: Permissions Coordinator,' at the address below.</p>
@@ -166,9 +168,11 @@ class BookService
         $spaceSm = (int) round($base * 0.75);
         $spaceMd = (int) round($base * 1.25);
         $spaceLg = (int) round($base * 2.0);
+        
+        $headingStyle = $this->getHeadingStyleCss();
 
         $html = '<div class="table-of-contents">';
-        $html .= '<h1 style="font-size: ' . $sizes['h1'] . 'px; line-height: ' . $lhHead . '; margin: ' . $spaceLg . 'px 0 ' . $spaceMd . 'px; text-align: center;">Table of Contents</h1>';
+        $html .= '<h1 style="font-size: ' . $sizes['h1'] . 'px; line-height: ' . $lhHead . '; margin: ' . $spaceLg . 'px 0 ' . $spaceMd . 'px; text-align: center; ' . $headingStyle . '">Table of Contents</h1>';
         $html .= '<div class="toc-content">';
 
         // Add special sections if they exist
@@ -263,6 +267,11 @@ class BookService
         $spaceSm = (int) round($base * 0.75);
         $spaceMd = (int) round($base * 1.25);
         $spaceLg = (int) round($base * 2.0);
+        
+        // Get styling based on user choice
+        $textStyle = $data['text_style'] ?? 'A';
+        $paragraphStyle = $this->getTextStyleCss($textStyle);
+        $headingStyle = $this->getHeadingStyleCss();
 
         $prompt = "Write a book introduction in HTML format.\n\n";
         $prompt .= "Book Title: {$data['title']}\n";
@@ -275,10 +284,10 @@ class BookService
         }
 
         $prompt .= "CRITICAL: Use EXACT inline typography (MUST be inline styles on the elements, not <style> tags):\n";
-        $prompt .= "- Book title <h1 style=\"font-size: {$sizes['h1']}px; line-height: {$lhHead}; margin: {$spaceLg}px 0 {$spaceMd}px; text-align: center;\">\n";
-        $prompt .= "- Author name <h2 style=\"font-size: {$sizes['h2']}px; line-height: {$lhHead}; margin: {$spaceMd}px 0 {$spaceSm}px; text-align: center;\">\n";
-        $prompt .= "- Paragraphs <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: justify;\">\n";
-        $prompt .= "- Optional section headings <h3 style=\"font-size: {$sizes['h3']}px; line-height: {$lhHead}; margin: {$spaceMd}px 0 {$spaceSm}px;\">\n";
+        $prompt .= "- Book title <h1 style=\"font-size: {$sizes['h1']}px; line-height: {$lhHead}; margin: {$spaceLg}px 0 {$spaceMd}px; text-align: center; {$headingStyle}\">\n";
+        $prompt .= "- Author name <h2 style=\"font-size: {$sizes['h2']}px; line-height: {$lhHead}; margin: {$spaceMd}px 0 {$spaceSm}px; text-align: center; {$headingStyle}\">\n";
+        $prompt .= "- Paragraphs <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: justify; {$paragraphStyle}\">\n";
+        $prompt .= "- Optional section headings <h3 style=\"font-size: {$sizes['h3']}px; line-height: {$lhHead}; margin: {$spaceMd}px 0 {$spaceSm}px; {$headingStyle}\">\n";
 
         $prompt .= "Content rules:\n";
         $prompt .= "- Start with EXACTLY this title: '{$data['title']}' (write it only ONCE) in h1 tags with the specified styling\n";
@@ -314,6 +323,11 @@ class BookService
         $spaceSm = (int) round($base * 0.75);
         $spaceMd = (int) round($base * 1.25);
         $spaceLg = (int) round($base * 2.0);
+        
+        // Get styling based on user choice
+        $textStyle = $data['text_style'] ?? 'A';
+        $paragraphStyle = $this->getTextStyleCss($textStyle);
+        $headingStyle = $this->getHeadingStyleCss();
 
         $prompt = "Write a book chapter content in HTML format.\n\n";
         $prompt .= "Chapter: {$chapterName} (Chapter {$chapterNumber})\n";
@@ -325,9 +339,9 @@ class BookService
         }
 
         $prompt .= "Inline typography (MUST be inline styles on the elements, not <style> tags):\n";
-        $prompt .= "- Chapter title <h1 style=\"font-size: {$sizes['h1']}px; line-height: {$lhHead}; margin: {$spaceLg}px 0 {$spaceMd}px; text-align: center;\">\n";
-        $prompt .= "- Section headings <h2 style=\"font-size: {$sizes['h2']}px; line-height: {$lhHead}; margin: {$spaceMd}px 0 {$spaceSm}px;\"> or <h3 style=\"font-size: {$sizes['h3']}px; line-height: {$lhHead}; margin: {$spaceMd}px 0 {$spaceSm}px;\">\n";
-        $prompt .= "- Paragraphs <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0;\">\n";
+        $prompt .= "- Chapter title <h1 style=\"font-size: {$sizes['h1']}px; line-height: {$lhHead}; margin: {$spaceLg}px 0 {$spaceMd}px; text-align: center; {$headingStyle}\">\n";
+        $prompt .= "- Section headings <h2 style=\"font-size: {$sizes['h2']}px; line-height: {$lhHead}; margin: {$spaceMd}px 0 {$spaceSm}px; {$headingStyle}\"> or <h3 style=\"font-size: {$sizes['h3']}px; line-height: {$lhHead}; margin: {$spaceMd}px 0 {$spaceSm}px; {$headingStyle}\">\n";
+        $prompt .= "- Paragraphs <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; {$paragraphStyle}\">\n";
         $prompt .= "- Use <strong> and <em> where appropriate (you may add inline style if needed)\n";
 
         $prompt .= "Content rules:\n";
@@ -375,21 +389,52 @@ class BookService
             $content = "<div class='{$type}'>{$content}</div>";
         }
 
-        // Ensure all h1 tags are centered (fallback for any that might not have text-align)
+        // Ensure all h1 tags are centered and bold (fallback for any that might not have proper styling)
         $content = preg_replace_callback('/<h1([^>]*)>/', function($matches) {
             $attributes = $matches[1];
-            // Only add text-align if it's not already present
-            if (!str_contains($attributes, 'text-align')) {
+            $needsCenter = !str_contains($attributes, 'text-align');
+            $needsBold = !str_contains($attributes, 'font-weight');
+            
+            if ($needsCenter || $needsBold) {
                 if (str_contains($attributes, 'style="')) {
                     // Add to existing style attribute
-                    $attributes = str_replace('style="', 'style="text-align: center; ', $attributes);
+                    $additions = [];
+                    if ($needsCenter) $additions[] = 'text-align: center;';
+                    if ($needsBold) $additions[] = 'font-weight: bold;';
+                    $attributes = str_replace('style="', 'style="' . implode(' ', $additions) . ' ', $attributes);
                 } else {
                     // Add new style attribute
-                    $attributes .= ' style="text-align: center;"';
+                    $additions = [];
+                    if ($needsCenter) $additions[] = 'text-align: center;';
+                    if ($needsBold) $additions[] = 'font-weight: bold;';
+                    $attributes .= ' style="' . implode(' ', $additions) . '"';
                 }
             }
             return '<h1' . $attributes . '>';
         }, $content);
+        
+        // Ensure all other heading tags (h2, h3, h4, h5, h6) are bold
+        for ($i = 2; $i <= 6; $i++) {
+            $content = preg_replace_callback('/<h' . $i . '([^>]*)>/', function($matches) use ($i) {
+                $attributes = $matches[1];
+                $needsBold = !str_contains($attributes, 'font-weight');
+                
+                if ($needsBold) {
+                    if (str_contains($attributes, 'style="')) {
+                        $attributes = str_replace('style="', 'style="font-weight: bold; ', $attributes);
+                    } else {
+                        $attributes .= ' style="font-weight: bold;"';
+                    }
+                }
+                return '<h' . $i . $attributes . '>';
+            }, $content);
+        }
+
+        // Process underline tags for better Quill compatibility
+        $content = $this->normalizeUnderlineForQuill($content);
+        
+        // Enhance underline visibility
+        $content = $this->enhanceUnderlineVisibility($content);
 
         // DO NOT add CSS classes that might override inline styles
         // The inline styles from the AI prompts should take precedence
@@ -620,5 +665,77 @@ class BookService
                 }
             ];
         }
+    }
+    
+    private function getTextStyleCss(string $textStyle): string
+    {
+        switch (strtoupper($textStyle)) {
+            case 'B':
+                return 'font-weight: bold;';
+            case 'I':
+                return 'font-style: italic;';
+            case 'U':
+                return 'text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px;';
+            case 'A':
+            default:
+                return 'font-weight: normal; font-style: normal; text-decoration: none;';
+        }
+    }
+    
+    private function getHeadingStyleCss(): string
+    {
+        // Headings are always bold regardless of user choice
+        return 'font-weight: bold;';
+    }
+    
+    private function normalizeUnderlineForQuill(string $content): string
+    {
+        // Convert <u> tags to proper CSS text-decoration for better Quill compatibility
+        $content = preg_replace_callback('/<u([^>]*)>(.*?)<\/u>/s', function($matches) {
+            $attributes = $matches[1];
+            $innerContent = $matches[2];
+            
+            // If it's already a styled element, add underline to existing style
+            if (preg_match('/<([^>]+)\s+style="([^"]*)"([^>]*)>(.*?)<\/\1>/s', $innerContent, $innerMatches)) {
+                $tag = $innerMatches[1];
+                $existingStyle = $innerMatches[2];
+                $otherAttrs = $innerMatches[3];
+                $text = $innerMatches[4];
+                
+                // Add underline to existing style if not already present
+                if (!str_contains($existingStyle, 'text-decoration')) {
+                    $newStyle = $existingStyle . '; text-decoration: underline;';
+                } else {
+                    $newStyle = $existingStyle;
+                }
+                
+                return "<{$tag} style=\"{$newStyle}\"{$otherAttrs}>{$text}</{$tag}>";
+            } else {
+                // Wrap in span with underline style
+                return "<span style=\"text-decoration: underline;\">{$innerContent}</span>";
+            }
+        }, $content);
+        
+        return $content;
+    }
+    
+    private function enhanceUnderlineVisibility(string $content): string
+    {
+        // Enhance underline visibility by ensuring proper CSS properties
+        $content = preg_replace_callback('/style="([^"]*text-decoration:\s*underline[^"]*)"/', function($matches) {
+            $style = $matches[1];
+            
+            // Add additional properties to make underline more visible
+            if (!str_contains($style, 'text-decoration-thickness')) {
+                $style .= '; text-decoration-thickness: 1px;';
+            }
+            if (!str_contains($style, 'text-underline-offset')) {
+                $style .= '; text-underline-offset: 2px;';
+            }
+            
+            return 'style="' . $style . '"';
+        }, $content);
+        
+        return $content;
     }
 }
