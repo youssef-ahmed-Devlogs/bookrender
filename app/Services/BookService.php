@@ -325,7 +325,7 @@ class BookService
         }
 
         $prompt .= "Inline typography (MUST be inline styles on the elements, not <style> tags):\n";
-        $prompt .= "- Chapter title <h1 style=\"font-size: {$sizes['h1']}px; line-height: {$lhHead}; margin: {$spaceLg}px 0 {$spaceMd}px;\">\n";
+        $prompt .= "- Chapter title <h1 style=\"font-size: {$sizes['h1']}px; line-height: {$lhHead}; margin: {$spaceLg}px 0 {$spaceMd}px; text-align: center;\">\n";
         $prompt .= "- Section headings <h2 style=\"font-size: {$sizes['h2']}px; line-height: {$lhHead}; margin: {$spaceMd}px 0 {$spaceSm}px;\"> or <h3 style=\"font-size: {$sizes['h3']}px; line-height: {$lhHead}; margin: {$spaceMd}px 0 {$spaceSm}px;\">\n";
         $prompt .= "- Paragraphs <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0;\">\n";
         $prompt .= "- Use <strong> and <em> where appropriate (you may add inline style if needed)\n";
@@ -374,6 +374,22 @@ class BookService
             // If no HTML tags found, wrap in appropriate structure without adding titles
             $content = "<div class='{$type}'>{$content}</div>";
         }
+
+        // Ensure all h1 tags are centered (fallback for any that might not have text-align)
+        $content = preg_replace_callback('/<h1([^>]*)>/', function($matches) {
+            $attributes = $matches[1];
+            // Only add text-align if it's not already present
+            if (!str_contains($attributes, 'text-align')) {
+                if (str_contains($attributes, 'style="')) {
+                    // Add to existing style attribute
+                    $attributes = str_replace('style="', 'style="text-align: center; ', $attributes);
+                } else {
+                    // Add new style attribute
+                    $attributes .= ' style="text-align: center;"';
+                }
+            }
+            return '<h1' . $attributes . '>';
+        }, $content);
 
         // DO NOT add CSS classes that might override inline styles
         // The inline styles from the AI prompts should take precedence
