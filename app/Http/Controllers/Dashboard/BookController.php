@@ -148,9 +148,21 @@ class BookController extends Controller
             return redirect()->route('dashboard.showpredict', ['project_id' => $project->id])
                 ->with('success', 'Book generated successfully!');
         } catch (\Exception $e) {
-            Log::error('Error creating book: ' . $e->getMessage());
+            Log::error('Error creating book: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+            
+            // Provide more specific error messages
+            $errorMessage = 'An error occurred while creating the book. Please try again.';
+            if (str_contains($e->getMessage(), 'Failed to generate')) {
+                $errorMessage = 'Failed to generate book content. Please check your AI service configuration and try again.';
+            } elseif (str_contains($e->getMessage(), 'word limit')) {
+                $errorMessage = 'Insufficient word quota to generate this book. Please upgrade your plan or reduce the content.';
+            }
+            
             return redirect()->route('dashboard.books.create')
-                ->with('error', 'An error occurred while creating the book. Please try again.');
+                ->with('error', $errorMessage);
         }
     }
 

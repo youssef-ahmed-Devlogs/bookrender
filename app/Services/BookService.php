@@ -39,6 +39,8 @@ class BookService
     public function generateBookContent(array $data): array
     {
         try {
+            Log::info('Starting book content generation', ['title' => $data['title'] ?? 'Unknown']);
+            
             $category = Category::where('name', $data['category'])->first();
             $chapterNames = array_map('trim', explode(',', $data['chapters']));
 
@@ -86,9 +88,17 @@ class BookService
                 ];
             }
 
+            Log::info('Book content generation completed', [
+                'sections_generated' => count($generatedContent),
+                'total_content_length' => array_sum(array_map(fn($section) => strlen($section['content']), $generatedContent))
+            ]);
+            
             return $generatedContent;
         } catch (\Exception $e) {
-            Log::error('Error generating book content: ' . $e->getMessage());
+            Log::error('Error generating book content: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'data' => $data
+            ]);
             throw new \Exception('Failed to generate book content. Please try again.');
         }
     }
@@ -116,46 +126,72 @@ class BookService
         $currentYear = date('Y');
         $author = $data['author'];
         $title = $data['title'];
+        
+        // Calculate font sizes based on user selection
+        $base = (int) ($data['font_size'] ?? 12);
+        $sizes = [
+            'p' => $base,
+            'h1' => $base + 20,
+        ];
+        $lhBody = 1.7;
+        $lhHead = 1.25;
+        $spaceSm = (int) round($base * 0.75);
+        $spaceMd = (int) round($base * 1.25);
+        $spaceLg = (int) round($base * 2.0);
 
-        return $this->formatAsHtml("
+        $content = "
             <div class='copyright-page'>
-                <h1>{$title}</h1>
-                <p>Copyright © {$currentYear} by {$author}</p>
-                <p>All rights reserved. No part of this book may be reproduced, distributed, or transmitted in any form or by any means, including photocopying, recording, or other electronic or mechanical methods, without the prior written permission of the publisher, except in the case of brief quotations embodied in critical reviews and certain other noncommercial uses permitted by copyright law.</p>
-                <p>For permission requests, write to the publisher, addressed 'Attention: Permissions Coordinator,' at the address below.</p>
-                <p>Published by BookRender</p>
-                <p>First Edition: {$currentYear}</p>
+                <h1 style=\"font-size: {$sizes['h1']}px; line-height: {$lhHead}; margin: {$spaceLg}px 0 {$spaceMd}px; text-align: center;\">{$title}</h1>
+                <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: center;\">Copyright © {$currentYear} by {$author}</p>
+                <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: justify;\">All rights reserved. No part of this book may be reproduced, distributed, or transmitted in any form or by any means, including photocopying, recording, or other electronic or mechanical methods, without the prior written permission of the publisher, except in the case of brief quotations embodied in critical reviews and certain other noncommercial uses permitted by copyright law.</p>
+                <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: justify;\">For permission requests, write to the publisher, addressed 'Attention: Permissions Coordinator,' at the address below.</p>
+                <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: center;\">Published by BookRender</p>
+                <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: center;\">First Edition: {$currentYear}</p>
             </div>
-        ", 'copyright');
+        ";
+
+        return $this->formatAsHtml($content, 'copyright');
     }
 
     private function generateTableOfContents(array $chapterNames, array $data): string
     {
+        // Calculate font sizes based on user selection
+        $base = (int) ($data['font_size'] ?? 12);
+        $sizes = [
+            'p' => $base,
+            'h1' => $base + 20,
+        ];
+        $lhBody = 1.7;
+        $lhHead = 1.25;
+        $spaceSm = (int) round($base * 0.75);
+        $spaceMd = (int) round($base * 1.25);
+        $spaceLg = (int) round($base * 2.0);
+
         $html = '<div class="table-of-contents">';
-        $html .= '<h1>Table of Contents</h1>';
+        $html .= '<h1 style="font-size: ' . $sizes['h1'] . 'px; line-height: ' . $lhHead . '; margin: ' . $spaceLg . 'px 0 ' . $spaceMd . 'px; text-align: center;">Table of Contents</h1>';
         $html .= '<div class="toc-content">';
 
         // Add special sections if they exist
         $pageNumber = 1;
 
         if ($data['book_intro'] === 'Yes') {
-            $html .= '<div class="toc-item"><span class="toc-title">Book Introduction</span><span class="toc-dots">........................</span><span class="toc-page">' . $pageNumber . '</span></div>';
+            $html .= '<div class="toc-item" style="display: flex; justify-content: space-between; margin-bottom: ' . $spaceSm . 'px;"><span class="toc-title" style="font-size: ' . $sizes['p'] . 'px;">Book Introduction</span><span class="toc-page" style="font-size: ' . $sizes['p'] . 'px;">' . $pageNumber . '</span></div>';
             $pageNumber++;
         }
 
         if ($data['copyright_page'] === 'Yes') {
-            $html .= '<div class="toc-item"><span class="toc-title">Copyright Page</span><span class="toc-dots">........................</span><span class="toc-page">' . $pageNumber . '</span></div>';
+            $html .= '<div class="toc-item" style="display: flex; justify-content: space-between; margin-bottom: ' . $spaceSm . 'px;"><span class="toc-title" style="font-size: ' . $sizes['p'] . 'px;">Copyright Page</span><span class="toc-page" style="font-size: ' . $sizes['p'] . 'px;">' . $pageNumber . '</span></div>';
             $pageNumber++;
         }
 
         if ($data['table_of_contents'] === 'Yes') {
-            $html .= '<div class="toc-item"><span class="toc-title">Table of Contents</span><span class="toc-dots">........................</span><span class="toc-page">' . $pageNumber . '</span></div>';
+            $html .= '<div class="toc-item" style="display: flex; justify-content: space-between; margin-bottom: ' . $spaceSm . 'px;"><span class="toc-title" style="font-size: ' . $sizes['p'] . 'px;">Table of Contents</span><span class="toc-page" style="font-size: ' . $sizes['p'] . 'px;">' . $pageNumber . '</span></div>';
             $pageNumber++;
         }
 
         // Add chapters
         foreach ($chapterNames as $index => $chapterName) {
-            $html .= '<div class="toc-item"><span class="toc-title">Chapter ' . ($index + 1) . ': ' . $chapterName . '</span><span class="toc-dots">........................</span><span class="toc-page">' . $pageNumber . '</span></div>';
+            $html .= '<div class="toc-item" style="display: flex; justify-content: space-between; margin-bottom: ' . $spaceSm . 'px;"><span class="toc-title" style="font-size: ' . $sizes['p'] . 'px;">Chapter ' . ($index + 1) . ': ' . $chapterName . '</span><span class="toc-page" style="font-size: ' . $sizes['p'] . 'px;">' . $pageNumber . '</span></div>';
             $pageNumber++;
         }
 
@@ -166,20 +202,48 @@ class BookService
 
     private function generateChapterContent(string $chapterName, array $data, ?Category $category, int $chapterNumber): string
     {
-        $aiService = new AiService();
+        try {
+            Log::info('Generating chapter content', ['chapter' => $chapterName, 'number' => $chapterNumber]);
+            
+            $aiService = new AiService();
 
-        $prompt = $this->buildChapterPrompt($chapterName, $data, $category, $chapterNumber);
+            $prompt = $this->buildChapterPrompt($chapterName, $data, $category, $chapterNumber);
 
-        $response = $aiService->buildPrompt(function () use ($prompt) {
-            return $prompt;
-        })->send();
+            $response = $aiService->buildPrompt(function () use ($prompt) {
+                return $prompt;
+            })->send();
 
-        if (!$response->successful()) {
-            throw new \Exception("Failed to generate content for chapter: {$chapterName}");
+            if (!$response->successful()) {
+                Log::error('AI service failed for chapter', ['chapter' => $chapterName, 'response' => $response]);
+                throw new \Exception("Failed to generate content for chapter: {$chapterName}");
+            }
+
+            $content = $response->json()['choices'][0]['text'] ?? '';
+            
+            if (empty($content)) {
+                Log::error('Empty content received from AI', ['chapter' => $chapterName]);
+                throw new \Exception("Empty content received for chapter: {$chapterName}");
+            }
+            
+            // Additional cleanup for AI-generated content before formatting
+            $content = $this->cleanupAiGeneratedContent($content, $chapterName);
+            
+            $finalContent = $this->formatAsHtml($content, 'chapter', $chapterNumber);
+            
+            Log::info('Chapter content generated successfully', [
+                'chapter' => $chapterName,
+                'content_length' => strlen($finalContent)
+            ]);
+            
+            return $finalContent;
+        } catch (\Exception $e) {
+            Log::error('Error generating chapter content', [
+                'chapter' => $chapterName,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
         }
-
-        $content = $response->json()['choices'][0]['text'] ?? '';
-        return $this->formatAsHtml($content, 'chapter', $chapterNumber);
     }
 
     private function buildBookIntroductionPrompt(array $data, ?Category $category): string
@@ -201,7 +265,8 @@ class BookService
         $spaceLg = (int) round($base * 2.0);
 
         $prompt = "Write a book introduction in HTML format.\n\n";
-        $prompt .= "Book: {$data['title']} by {$data['author']}\n";
+        $prompt .= "Book Title: {$data['title']}\n";
+        $prompt .= "Author: {$data['author']}\n";
         $prompt .= "Description: {$data['description']}\n";
         $prompt .= "Category: {$data['category']}\n\n";
 
@@ -209,18 +274,25 @@ class BookService
             $prompt .= "Style: {$category->prompt}\n\n";
         }
 
-        $prompt .= "Inline typography (MUST be inline styles on the elements, not <style> tags):\n";
-        $prompt .= "- Paragraphs <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0;\">\n";
-        $prompt .= "- <h1 style=\"font-size: {$sizes['h1']}px; line-height: {$lhHead}; margin: {$spaceLg}px 0 {$spaceMd}px;\"> (main title)\n";
-        $prompt .= "- <h2 style=\"font-size: {$sizes['h2']}px; line-height: {$lhHead}; margin: {$spaceMd}px 0 {$spaceSm}px;\"> (subtitle)\n";
-        $prompt .= "- Optional section headings may use <h3 style=\"font-size: {$sizes['h3']}px; line-height: {$lhHead}; margin: {$spaceMd}px 0 {$spaceSm}px;\">\n";
+        $prompt .= "CRITICAL: Use EXACT inline typography (MUST be inline styles on the elements, not <style> tags):\n";
+        $prompt .= "- Book title <h1 style=\"font-size: {$sizes['h1']}px; line-height: {$lhHead}; margin: {$spaceLg}px 0 {$spaceMd}px; text-align: center;\">\n";
+        $prompt .= "- Author name <h2 style=\"font-size: {$sizes['h2']}px; line-height: {$lhHead}; margin: {$spaceMd}px 0 {$spaceSm}px; text-align: center;\">\n";
+        $prompt .= "- Paragraphs <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: justify;\">\n";
+        $prompt .= "- Optional section headings <h3 style=\"font-size: {$sizes['h3']}px; line-height: {$lhHead}; margin: {$spaceMd}px 0 {$spaceSm}px;\">\n";
 
         $prompt .= "Content rules:\n";
+        $prompt .= "- Start with EXACTLY this title: '{$data['title']}' (write it only ONCE) in h1 tags with the specified styling\n";
+        $prompt .= "- Follow with EXACTLY this author: 'by {$data['author']}' (write it only ONCE) in h2 tags with the specified styling\n";
         $prompt .= "- Write 2–3 engaging paragraphs that hook the reader\n";
+        $prompt .= "- Use EXACTLY the font sizes specified above\n";
         $prompt .= "- Use only inline styles for all typography and spacing\n";
         $prompt .= "- Do NOT include any <style> blocks or external CSS\n";
-        $prompt .= "- Do NOT use markdown code blocks (```)\n\n";
-        $prompt .= "Generate ONLY the HTML (with inline styles). No extra commentary:";
+        $prompt .= "- Do NOT use markdown code blocks (```html or ```)\n";
+        $prompt .= "- Do NOT generate full HTML documents with <!DOCTYPE>, <html>, <head>, <body> tags\n";
+        $prompt .= "- Generate ONLY the content HTML elements (h1, h2, p tags with inline styles)\n";
+        $prompt .= "- CRITICAL: Do NOT repeat any text - write each title/name only ONCE\n";
+        $prompt .= "- CRITICAL: Do NOT duplicate words within titles (avoid 'TitleTitle' patterns)\n\n";
+        $prompt .= "Generate ONLY the content HTML elements (with exact inline styles as specified). No extra commentary, no code blocks, no full HTML document:";
 
         return $prompt;
     }
@@ -243,10 +315,9 @@ class BookService
         $spaceMd = (int) round($base * 1.25);
         $spaceLg = (int) round($base * 2.0);
 
-        $prompt = "Write a book chapter in HTML format.\n\n";
-        $prompt .= "Book: {$data['title']} by {$data['author']}\n";
+        $prompt = "Write a book chapter content in HTML format.\n\n";
         $prompt .= "Chapter: {$chapterName} (Chapter {$chapterNumber})\n";
-        $prompt .= "Description: {$data['description']}\n";
+        $prompt .= "Book Description: {$data['description']}\n";
         $prompt .= "Category: {$data['category']}\n\n";
 
         if ($category && $category->prompt) {
@@ -260,13 +331,20 @@ class BookService
         $prompt .= "- Use <strong> and <em> where appropriate (you may add inline style if needed)\n";
 
         $prompt .= "Content rules:\n";
+        $prompt .= "- Start with EXACTLY this chapter title: '{$chapterName}' (write it only ONCE) in h1 tags with the specified styling\n";
         $prompt .= "- 600–1200 words, engaging, with narrative flow\n";
         $prompt .= "- Include description and occasional dialogue\n";
         $prompt .= "- Match the book's theme\n";
+        $prompt .= "- DO NOT repeat the book title in the chapter content\n";
+        $prompt .= "- CRITICAL: Do NOT repeat the chapter title multiple times\n";
+        $prompt .= "- CRITICAL: Do NOT duplicate words within the chapter title (avoid 'TitleTitle' patterns)\n";
+        $prompt .= "- Focus only on the chapter content, not book metadata\n";
         $prompt .= "- Use only inline styles for all typography and spacing\n";
         $prompt .= "- Do NOT include any <style> blocks or external CSS\n";
-        $prompt .= "- Do NOT use markdown code blocks (```)\n\n";
-        $prompt .= "Generate ONLY the HTML (with inline styles). No extra commentary:";
+        $prompt .= "- Do NOT use markdown code blocks (```html or ```)\n";
+        $prompt .= "- Do NOT generate full HTML documents with <!DOCTYPE>, <html>, <head>, <body> tags\n";
+        $prompt .= "- Generate ONLY the content HTML elements (h1, h2, h3, p tags with inline styles)\n\n";
+        $prompt .= "Generate ONLY the content HTML elements (with inline styles). No extra commentary, no code blocks, no full HTML document:";
 
         return $prompt;
     }
@@ -288,22 +366,210 @@ class BookService
         // Clean up any extra whitespace
         $content = trim($content);
 
-        // Ensure proper HTML structure
+        // Fix duplicate titles by removing repeated h1 tags with the same content
+        $content = $this->removeDuplicateTitles($content);
+
+        // Ensure proper HTML structure - but don't add automatic chapter titles
         if (!preg_match('/<html|<body|<div|<h[1-6]|<p/', $content)) {
-            // If no HTML tags found, wrap in appropriate structure
-            if ($type === 'chapter' && $chapterNumber) {
-                $content = "<div class='chapter'><h1>Chapter {$chapterNumber}</h1><div class='chapter-content'>{$content}</div></div>";
-            } else {
-                $content = "<div class='{$type}'>{$content}</div>";
-            }
+            // If no HTML tags found, wrap in appropriate structure without adding titles
+            $content = "<div class='{$type}'>{$content}</div>";
         }
 
-        // Add CSS classes for styling
-        $content = str_replace('<h1>', '<h1 class="chapter-title">', $content);
-        $content = str_replace('<h2>', '<h2 class="section-title">', $content);
-        $content = str_replace('<p>', '<p class="paragraph">', $content);
+        // DO NOT add CSS classes that might override inline styles
+        // The inline styles from the AI prompts should take precedence
+        // Only add minimal wrapper classes if needed
+        if ($type === 'chapter') {
+            $content = "<div class='chapter-content'>{$content}</div>";
+        } elseif ($type === 'introduction') {
+            $content = "<div class='introduction-content'>{$content}</div>";
+        } elseif ($type === 'copyright') {
+            $content = "<div class='copyright-content'>{$content}</div>";
+        }
 
         return $content;
+    }
+
+    private function removeDuplicateTitles(string $content): string
+    {
+        // First, handle HTML h1 tags with duplicate content
+        $pattern = '/<h1[^>]*>(.*?)<\/h1>/i';
+        
+        if (preg_match_all($pattern, $content, $matches, PREG_SET_ORDER)) {
+            $seenTitles = [];
+            $toRemove = [];
+            
+            foreach ($matches as $match) {
+                $fullTag = $match[0];
+                $titleText = strip_tags($match[1]);
+                $cleanTitle = trim($titleText);
+                
+                if (in_array($cleanTitle, $seenTitles)) {
+                    // This is a duplicate, mark for removal
+                    $toRemove[] = $fullTag;
+                } else {
+                    $seenTitles[] = $cleanTitle;
+                }
+            }
+            
+            // Remove duplicate titles
+            foreach ($toRemove as $duplicateTag) {
+                $content = str_replace($duplicateTag, '', $content);
+            }
+        }
+        
+        // Handle duplicated text within h1 tags (like "TitleTitle" inside <h1>TitleTitle</h1>)
+        $content = preg_replace_callback('/<h1([^>]*)>([^<]+)<\/h1>/i', function($matches) {
+            $attributes = $matches[1];
+            $titleText = $matches[2];
+            
+            // Check if the title text is duplicated within itself
+            $cleanedTitle = $this->removeDuplicatedText($titleText);
+            
+            return "<h1{$attributes}>{$cleanedTitle}</h1>";
+        }, $content);
+        
+        // Handle duplicated text within h2 tags (for author names)
+        $content = preg_replace_callback('/<h2([^>]*)>([^<]+)<\/h2>/i', function($matches) {
+            $attributes = $matches[1];
+            $titleText = $matches[2];
+            
+            // Check if the title text is duplicated within itself
+            $cleanedTitle = $this->removeDuplicatedText($titleText);
+            
+            return "<h2{$attributes}>{$cleanedTitle}</h2>";
+        }, $content);
+        
+        // Also handle cases where titles might be repeated as plain text at the beginning of lines
+        $content = preg_replace_callback('/^(.{1,50}?)\1+$/m', function($matches) {
+            $line = trim($matches[0]);
+            // Only apply this to lines that look like titles (short lines, no complex HTML)
+            if (strlen($line) < 100 && substr_count($line, '<') <= 2) {
+                return trim($matches[1]);
+            }
+            return $line;
+        }, $content);
+        
+        return $content;
+    }
+    
+    private function removeDuplicatedText(string $text): string
+    {
+        $text = trim($text);
+        
+        // Handle cases like "TitleTitle" -> "Title"
+        // Split the text in half and check if both halves are identical
+        $length = strlen($text);
+        
+        // Try different split points to find duplications
+        for ($i = 1; $i <= $length / 2; $i++) {
+            $firstPart = substr($text, 0, $i);
+            $secondPart = substr($text, $i, $i);
+            
+            if ($firstPart === $secondPart) {
+                // Check if the rest of the string continues the pattern
+                $pattern = str_repeat($firstPart, floor($length / $i));
+                if (strpos($text, $pattern) === 0) {
+                    return $firstPart;
+                }
+            }
+        }
+        
+        // If no duplication pattern found, return original text
+        return $text;
+    }
+
+    private function cleanupAiGeneratedContent(string $content, string $expectedTitle): string
+    {
+        // Clean up the raw AI response
+        $content = trim($content);
+        
+        // Remove any leading/trailing quotes or extra formatting
+        $content = trim($content, '"\'');
+        
+        // CRITICAL: Remove full HTML document structure that AI is generating
+        // Remove ```html code blocks
+        $content = preg_replace('/^```html\s*/i', '', $content);
+        $content = preg_replace('/\s*```$/', '', $content);
+        
+        // Remove DOCTYPE and HTML document structure
+        $content = preg_replace('/<!DOCTYPE[^>]*>/i', '', $content);
+        $content = preg_replace('/<html[^>]*>/i', '', $content);
+        $content = preg_replace('/<\/html>/i', '', $content);
+        $content = preg_replace('/<head[^>]*>.*?<\/head>/is', '', $content);
+        $content = preg_replace('/<body[^>]*>/i', '', $content);
+        $content = preg_replace('/<\/body>/i', '', $content);
+        $content = preg_replace('/<meta[^>]*>/i', '', $content);
+        
+        // Clean up any remaining whitespace after removing HTML structure
+        $content = trim($content);
+        
+        // AGGRESSIVE: Handle the specific patterns we're seeing
+        // Pattern 1: "TitleTitle" at the beginning of content
+        $escapedTitle = preg_quote($expectedTitle, '/');
+        $content = preg_replace('/^' . $escapedTitle . '\s*' . $escapedTitle . '/i', $expectedTitle, $content);
+        
+        // Pattern 2: Handle cases where title words are duplicated individually
+        $titleWords = explode(' ', $expectedTitle);
+        foreach ($titleWords as $word) {
+            if (strlen($word) > 2) { // Only process meaningful words
+                $escapedWord = preg_quote($word, '/');
+                // Replace "WordWord" with "Word" at the beginning of lines
+                $content = preg_replace('/^' . $escapedWord . '\s*' . $escapedWord . '/im', $word, $content);
+            }
+        }
+        
+        // Pattern 3: Handle any repeated text at the beginning of lines (more aggressive)
+        $lines = explode("\n", $content);
+        $cleanedLines = [];
+        
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (empty($line)) {
+                $cleanedLines[] = $line;
+                continue;
+            }
+            
+            // Check if this line has repeated text
+            $cleanedLine = $this->removeLineRepetition($line);
+            $cleanedLines[] = $cleanedLine;
+        }
+        
+        $content = implode("\n", $cleanedLines);
+        
+        // Clean up any double spaces or line breaks
+        $content = preg_replace('/\s+/', ' ', $content);
+        $content = preg_replace('/\n\s*\n/', "\n\n", $content);
+        
+        // Log the content for debugging (remove in production)
+        Log::info('AI Generated Content for: ' . $expectedTitle, [
+            'original_length' => strlen($content),
+            'first_100_chars' => substr($content, 0, 100)
+        ]);
+        
+        return trim($content);
+    }
+    
+    private function removeLineRepetition(string $line): string
+    {
+        $line = trim($line);
+        $length = strlen($line);
+        
+        // Try to find if the line is repeated text
+        for ($i = 1; $i <= $length / 2; $i++) {
+            $firstPart = substr($line, 0, $i);
+            $remaining = substr($line, $i);
+            
+            // Check if the remaining part starts with the same text
+            if (strpos($remaining, $firstPart) === 0) {
+                // Check how many times it repeats
+                $pattern = str_repeat($firstPart, floor($length / $i));
+                if (strpos($line, $pattern) === 0) {
+                    return $firstPart;
+                }
+            }
+        }
+        
+        return $line;
     }
 
     // Legacy method for backward compatibility
