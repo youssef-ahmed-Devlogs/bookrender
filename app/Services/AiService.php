@@ -98,7 +98,7 @@ class AiService
                 ])
                 ->retry(1, 500) // Single retry with shorter delay for fallback
                 ->post($this->url, [
-                    'model' => 'NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO', // Alternative fallback model
+                    'model' => 'meta-llama/Llama-2-70b-chat-hf', // Reliable serverless fallback model
                     'prompt' => $this->prompt,
                     'max_tokens' => 2000,
                     'temperature' => 0.7,

@@ -74,6 +74,8 @@
                 padding: 40px 20px;
                 box-shadow: 1px 1px 4px 0px #0000004a;
                 margin: auto;
+                overflow-y: auto;
+                padding-bottom: 120px;
             }
 
             @media(max-width: 1565px) {
