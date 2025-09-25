@@ -171,37 +171,76 @@ class BookService
         
         $headingStyle = $this->getHeadingStyleCss();
 
-        $html = '<div class="table-of-contents">';
+        $html = '<div class="table-of-contents" style="max-width: 100%; margin: 0 auto;">';
         $html .= '<h1 style="font-size: ' . $sizes['h1'] . 'px; line-height: ' . $lhHead . '; margin: ' . $spaceLg . 'px 0 ' . $spaceMd . 'px; text-align: center; ' . $headingStyle . '">Table of Contents</h1>';
-        $html .= '<div class="toc-content">';
+        $html .= '<div class="toc-content" style="margin-top: ' . $spaceLg . 'px;">';
 
         // Add special sections if they exist
         $pageNumber = 1;
 
         if ($data['book_intro'] === 'Yes') {
-            $html .= '<div class="toc-item" style="display: flex; justify-content: space-between; margin-bottom: ' . $spaceSm . 'px;"><span class="toc-title" style="font-size: ' . $sizes['p'] . 'px;">Book Introduction</span><span class="toc-page" style="font-size: ' . $sizes['p'] . 'px;">' . $pageNumber . '</span></div>';
+            $html .= $this->generateTocItem('Book Introduction', $pageNumber, $sizes['p'], $spaceSm);
             $pageNumber++;
         }
 
         if ($data['copyright_page'] === 'Yes') {
-            $html .= '<div class="toc-item" style="display: flex; justify-content: space-between; margin-bottom: ' . $spaceSm . 'px;"><span class="toc-title" style="font-size: ' . $sizes['p'] . 'px;">Copyright Page</span><span class="toc-page" style="font-size: ' . $sizes['p'] . 'px;">' . $pageNumber . '</span></div>';
+            $html .= $this->generateTocItem('Copyright Page', $pageNumber, $sizes['p'], $spaceSm);
             $pageNumber++;
         }
 
         if ($data['table_of_contents'] === 'Yes') {
-            $html .= '<div class="toc-item" style="display: flex; justify-content: space-between; margin-bottom: ' . $spaceSm . 'px;"><span class="toc-title" style="font-size: ' . $sizes['p'] . 'px;">Table of Contents</span><span class="toc-page" style="font-size: ' . $sizes['p'] . 'px;">' . $pageNumber . '</span></div>';
+            $html .= $this->generateTocItem('Table of Contents', $pageNumber, $sizes['p'], $spaceSm);
             $pageNumber++;
         }
 
         // Add chapters
         foreach ($chapterNames as $index => $chapterName) {
-            $html .= '<div class="toc-item" style="display: flex; justify-content: space-between; margin-bottom: ' . $spaceSm . 'px;"><span class="toc-title" style="font-size: ' . $sizes['p'] . 'px;">Chapter ' . ($index + 1) . ': ' . $chapterName . '</span><span class="toc-page" style="font-size: ' . $sizes['p'] . 'px;">' . $pageNumber . '</span></div>';
+            $chapterTitle = 'Chapter ' . ($index + 1) . ': ' . $chapterName;
+            $html .= $this->generateTocItem($chapterTitle, $pageNumber, $sizes['p'], $spaceSm);
             $pageNumber++;
         }
 
         $html .= '</div></div>';
 
         return $html;
+    }
+    
+    private function generateTocItem(string $title, int $pageNumber, int $fontSize, int $marginBottom): string
+    {
+        // Professional TOC item with dotted leaders
+        return '<div class="toc-item" style="' .
+            'display: flex; ' .
+            'align-items: baseline; ' .
+            'margin-bottom: ' . $marginBottom . 'px; ' .
+            'line-height: 1.6; ' .
+            'position: relative;' .
+        '">' .
+            '<span class="toc-title" style="' .
+                'font-size: ' . $fontSize . 'px; ' .
+                'flex-shrink: 0; ' .
+                'padding-right: 8px; ' .
+                'background: white; ' .
+                'position: relative; ' .
+                'z-index: 2;' .
+            '">' . htmlspecialchars($title) . '</span>' .
+            '<span class="toc-leader" style="' .
+                'flex-grow: 1; ' .
+                'border-bottom: 1px dotted #333; ' .
+                'margin: 0 8px; ' .
+                'height: 1px; ' .
+                'position: relative; ' .
+                'top: -3px;' .
+            '"></span>' .
+            '<span class="toc-page" style="' .
+                'font-size: ' . $fontSize . 'px; ' .
+                'flex-shrink: 0; ' .
+                'padding-left: 8px; ' .
+                'background: white; ' .
+                'position: relative; ' .
+                'z-index: 2; ' .
+                'font-weight: bold;' .
+            '">' . $pageNumber . '</span>' .
+        '</div>';
     }
 
     private function generateChapterContent(string $chapterName, array $data, ?Category $category, int $chapterNumber): string

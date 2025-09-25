@@ -155,10 +155,14 @@ class BookController extends Controller
             
             // Provide more specific error messages
             $errorMessage = 'An error occurred while creating the book. Please try again.';
-            if (str_contains($e->getMessage(), 'Failed to generate')) {
-                $errorMessage = 'Failed to generate book content. Please check your AI service configuration and try again.';
+            if (str_contains($e->getMessage(), 'Failed to generate') || str_contains($e->getMessage(), 'SSL connection timeout')) {
+                $errorMessage = 'Unable to connect to AI service. Please check your internet connection and try again. If the problem persists, the AI service may be temporarily unavailable.';
+            } elseif (str_contains($e->getMessage(), 'cURL error 28')) {
+                $errorMessage = 'Connection timeout while generating content. Please try again with a stable internet connection.';
             } elseif (str_contains($e->getMessage(), 'word limit')) {
                 $errorMessage = 'Insufficient word quota to generate this book. Please upgrade your plan or reduce the content.';
+            } elseif (str_contains($e->getMessage(), 'Both primary and fallback')) {
+                $errorMessage = 'AI service is currently unavailable. Please try again in a few minutes.';
             }
             
             return redirect()->route('dashboard.books.create')
