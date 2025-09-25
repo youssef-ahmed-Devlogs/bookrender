@@ -464,7 +464,7 @@ class BookController extends Controller
         ];
 
         // Load the enhanced export view
-        $pdf = Pdf::loadView('dashboard.books.export', $exportData);
+        $pdf = Pdf::loadView('dashboard.books.export-enhanced', $exportData);
 
         // Configure PDF options for better rendering
         $pdf->setOptions([
