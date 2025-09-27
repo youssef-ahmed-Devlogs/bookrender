@@ -10,6 +10,7 @@ class BookService
 {
     public function create($request): Project
     {
+        /** @var \App\Models\User $user */
         $user = auth()->user();
 
         $project = Project::create([
@@ -145,8 +146,8 @@ class BookService
             <div class='copyright-page'>
                 <h1 style=\"font-size: {$sizes['h1']}px; line-height: {$lhHead}; margin: {$spaceLg}px 0 {$spaceMd}px; text-align: center; {$headingStyle}\">{$title}</h1>
                 <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: center;\">Copyright © {$currentYear} by {$author}</p>
-                <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: justify;\">All rights reserved. No part of this book may be reproduced, distributed, or transmitted in any form or by any means, including photocopying, recording, or other electronic or mechanical methods, without the prior written permission of the publisher, except in the case of brief quotations embodied in critical reviews and certain other noncommercial uses permitted by copyright law.</p>
-                <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: justify;\">For permission requests, write to the publisher, addressed 'Attention: Permissions Coordinator,' at the address below.</p>
+                <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: left;\">All rights reserved. No part of this book may be reproduced, distributed, or transmitted in any form or by any means, including photocopying, recording, or other electronic or mechanical methods, without the prior written permission of the publisher, except in the case of brief quotations embodied in critical reviews and certain other noncommercial uses permitted by copyright law.</p>
+                <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: left;\">For permission requests, write to the publisher, addressed 'Attention: Permissions Coordinator,' at the address below.</p>
                 <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: center;\">Published by BookRender</p>
                 <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: center;\">First Edition: {$currentYear}</p>
             </div>
@@ -327,7 +328,7 @@ class BookService
         $prompt .= "CRITICAL: Use EXACT inline typography (MUST be inline styles on the elements, not <style> tags):\n";
         $prompt .= "- Book title <h1 style=\"font-size: {$sizes['h1']}px; line-height: {$lhHead}; margin: {$spaceLg}px 0 {$spaceMd}px; text-align: center; {$headingStyle}\">\n";
         $prompt .= "- Author name <h2 style=\"font-size: {$sizes['h2']}px; line-height: {$lhHead}; margin: {$spaceMd}px 0 {$spaceSm}px; text-align: center; {$headingStyle}\">\n";
-        $prompt .= "- Paragraphs <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: justify; {$paragraphStyle}\">\n";
+        $prompt .= "- Paragraphs <p style=\"font-size: {$sizes['p']}px; line-height: {$lhBody}; margin: 0 0 {$spaceSm}px 0; text-align: left; {$paragraphStyle}\">\n";
         $prompt .= "- Optional section headings <h3 style=\"font-size: {$sizes['h3']}px; line-height: {$lhHead}; margin: {$spaceMd}px 0 {$spaceSm}px; {$headingStyle}\">\n";
 
         $prompt .= "Content rules:\n";

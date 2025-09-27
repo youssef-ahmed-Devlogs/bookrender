@@ -338,10 +338,25 @@ class BookController extends Controller
         // Handle PDF and PDF Print
         $pdf = Pdf::loadView('dashboard.books.export', compact('project', 'chapters'));
 
+        // Configure PDF options
+        $options = [
+            'isHtml5ParserEnabled' => true, 
+            'isRemoteEnabled' => true,
+            'defaultFont' => 'Arial'
+        ];
+
         if ($project->format === 'PDF Print') {
             // Additional settings for print if necessary
-            $pdf->setOption(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+            $options['dpi'] = 300;
+            $options['isPhpEnabled'] = true;
         }
+
+        // Enable PHP for page numbering if requested
+        if ($project->add_page_num === 'Yes') {
+            $options['isPhpEnabled'] = true;
+        }
+
+        $pdf->setOptions($options);
 
         return $pdf->download("{$project->title}.pdf");
     }

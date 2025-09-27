@@ -13,12 +13,12 @@
             $h = $matches[2];
             $cssSize = $w . 'in ' . $h . 'in';
         }
-        
+
         // Separate special sections from regular chapters
         $specialSections = ['Book Introduction', 'Copyright Page', 'Table of Contents'];
         $specialChapters = $chapters->whereIn('title', $specialSections);
         $regularChapters = $chapters->whereNotIn('title', $specialSections);
-        
+
         // Get specific special sections
         $bookIntroChapter = $specialChapters->where('title', 'Book Introduction')->first();
         $copyrightChapter = $specialChapters->where('title', 'Copyright Page')->first();
@@ -30,10 +30,8 @@
         }
 
         @page {
-            size:
-                {{ $cssSize }}
-            ;
-            margin: 1in;
+            size: {{ $cssSize }};
+            margin: 0.5in;
             @if($project->bleed_file == 'Yes')
                 bleed: 0.125in;
                 marks: crop;
@@ -100,7 +98,7 @@
         .chapter p {
             font-size: 15px;
             line-height: 1.8;
-            text-align: justify;
+            text-align: left;
             margin: 0;
         }
 
@@ -112,7 +110,7 @@
         }
 
         .chapter-content {
-            text-align: justify;
+            text-align: left;
         }
 
         .footer {
@@ -152,7 +150,7 @@
             margin-top: 1em;
             font-size: 1em;
             color: #666;
-            text-align: justify;
+            text-align: center;
             padding: 0 2em;
         }
 
@@ -160,6 +158,20 @@
             text-align: center;
             padding-top: 20%;
         }
+
+        /* Page numbering fallback using fixed positioning */
+        @if($project->add_page_num == 'Yes')
+        .page-number {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            color: #333;
+            z-index: 1000;
+        }
+        @endif
     </style>
 </head>
 
@@ -210,16 +222,21 @@
         </div>
     @endforeach
 
-    {{-- Optional: Add Page Numbers --}}
+    {{-- Add Page Numbers using DomPDF script --}}
     @if($project->add_page_num == 'Yes')
         <script type="text/php">
-                                    if (isset($pdf)) {
-                                        $pdf->page_script('
-                                            $font = $fontMetrics->get_font("{{ $project->text_style }}", "normal");
-                                            $pdf->text(500, 800, "Page $PAGE_NUM of $PAGE_COUNT", $font, 10);
-                                        ');
-                                    }
-                                </script>
+            if (isset($pdf)) {
+                $pdf->page_script('
+                    $font = $fontMetrics->get_font("Arial");
+                    $size = 10;
+                    $text = "Page $PAGE_NUM of $PAGE_COUNT";
+                    $width = $fontMetrics->get_text_width($text, $font, $size);
+                    $x = ($pdf->get_width() - $width) / 2;
+                    $y = $pdf->get_height() - 30;
+                    $pdf->text($x, $y, $text, $font, $size);
+                ');
+            }
+        </script>
     @endif
 
 </body>
