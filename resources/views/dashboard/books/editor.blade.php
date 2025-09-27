@@ -26,6 +26,55 @@
             .ql-toolbar .ql-underline.ql-active {
                 color: #06c !important;
             }
+
+            /* Support for PDF-compatible table-based table of contents */
+            .preview-area .toc-item {
+                display: table !important;
+                width: 100% !important;
+                margin-bottom: 11px !important;
+                line-height: 1.6 !important;
+                table-layout: fixed !important;
+            }
+
+            .preview-area .toc-title {
+                display: table-cell !important;
+                font-size: 14px !important;
+                width: auto !important;
+                padding-right: 8px !important;
+                background: white !important;
+                vertical-align: bottom !important;
+                white-space: nowrap !important;
+            }
+
+            .preview-area .toc-leader {
+                display: table-cell !important;
+                width: 100% !important;
+                border-bottom: 1px dotted #333 !important;
+                height: 1px !important;
+                vertical-align: bottom !important;
+            }
+
+            .preview-area .toc-page {
+                display: table-cell !important;
+                font-size: 14px !important;
+                width: auto !important;
+                padding-left: 8px !important;
+                background: white !important;
+                vertical-align: bottom !important;
+                font-weight: bold !important;
+                text-align: right !important;
+                white-space: nowrap !important;
+            }
+
+            /* Ensure table of contents container styling */
+            .preview-area .table-of-contents {
+                max-width: 100% !important;
+                margin: 0 auto !important;
+            }
+
+            .preview-area .toc-content {
+                margin-top: 28px !important;
+            }
         </style>
 
         @php
@@ -228,6 +277,10 @@
             <h6 class="mt-5 mb-3">List of Chapter</h6>
             <ul class="chapter-list">
                 @foreach ($project->chapters as $key => $chapter)
+                @if ($chapter->title == 'Table of Contents' && !$isPreview)
+                @continue
+            @endif
+
                     <li class=" {{ $key == 0 ? 'active' : '' }} mb-1" data-id="{{ $chapter->id }}"
                         data-content="{{ $chapter->content }}" title="{{ $chapter->title }}">
 

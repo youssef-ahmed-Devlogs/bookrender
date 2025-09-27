@@ -207,38 +207,40 @@ class BookService
     
     private function generateTocItem(string $title, int $pageNumber, int $fontSize, int $marginBottom): string
     {
-        // Professional TOC item with dotted leaders
+        // PDF-compatible TOC item using table layout instead of flexbox
         return '<div class="toc-item" style="' .
-            'display: flex; ' .
-            'align-items: baseline; ' .
+            'display: table; ' .
+            'width: 100%; ' .
             'margin-bottom: ' . $marginBottom . 'px; ' .
             'line-height: 1.6; ' .
-            'position: relative;' .
+            'table-layout: fixed;' .
         '">' .
             '<span class="toc-title" style="' .
+                'display: table-cell; ' .
                 'font-size: ' . $fontSize . 'px; ' .
-                'flex-shrink: 0; ' .
+                'width: auto; ' .
                 'padding-right: 8px; ' .
                 'background: white; ' .
-                'position: relative; ' .
-                'z-index: 2;' .
+                'vertical-align: bottom; ' .
+                'white-space: nowrap;' .
             '">' . htmlspecialchars($title) . '</span>' .
             '<span class="toc-leader" style="' .
-                'flex-grow: 1; ' .
+                'display: table-cell; ' .
+                'width: 100%; ' .
                 'border-bottom: 1px dotted #333; ' .
-                'margin: 0 8px; ' .
                 'height: 1px; ' .
-                'position: relative; ' .
-                'top: -3px;' .
+                'vertical-align: bottom;' .
             '"></span>' .
             '<span class="toc-page" style="' .
+                'display: table-cell; ' .
                 'font-size: ' . $fontSize . 'px; ' .
-                'flex-shrink: 0; ' .
+                'width: auto; ' .
                 'padding-left: 8px; ' .
                 'background: white; ' .
-                'position: relative; ' .
-                'z-index: 2; ' .
-                'font-weight: bold;' .
+                'vertical-align: bottom; ' .
+                'font-weight: bold; ' .
+                'text-align: right; ' .
+                'white-space: nowrap;' .
             '">' . $pageNumber . '</span>' .
         '</div>';
     }

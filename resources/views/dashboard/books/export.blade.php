@@ -13,6 +13,16 @@
             $h = $matches[2];
             $cssSize = $w . 'in ' . $h . 'in';
         }
+        
+        // Separate special sections from regular chapters
+        $specialSections = ['Book Introduction', 'Copyright Page', 'Table of Contents'];
+        $specialChapters = $chapters->whereIn('title', $specialSections);
+        $regularChapters = $chapters->whereNotIn('title', $specialSections);
+        
+        // Get specific special sections
+        $bookIntroChapter = $specialChapters->where('title', 'Book Introduction')->first();
+        $copyrightChapter = $specialChapters->where('title', 'Copyright Page')->first();
+        $tableOfContentsChapter = $specialChapters->where('title', 'Table of Contents')->first();
     @endphp
     <style>
         img {
@@ -165,35 +175,40 @@
     {{-- Title Page --}}
     <div class="title-page">
         <h1>{{ $project->title }}</h1>
-        <h2>{{ $project->second_title }}</h2>
+        @if($project->second_title)
+            <h2>{{ $project->second_title }}</h2>
+        @endif
         <h3>By: {{ $project->author }}</h3>
-        <p>{{ $project->description }}</p>
+        @if($project->description)
+            <p>{{ $project->description }}</p>
+        @endif
     </div>
 
-    <div class="book-header">
-        {{-- cover image removed from header --}}
-        <h1>{{ $project->title }} {{ $project->second_title }}</h1>
-    </div>
-
-    @if($project->table_of_contents == 'Yes')
-        <h1 class="chapter-title">Table of Contents</h1>
-        <ul>
-            @foreach($chapters as $chapter)
-                <li>{{ $chapter->title }}</li>
-            @endforeach
-        </ul>
+    {{-- Special Sections (using PDF-compatible content from database) --}}
+    @if($bookIntroChapter)
+        <div style="page-break-after: always;">
+            {!! $bookIntroChapter->content !!}
+        </div>
     @endif
 
-    <div class="chapters">
-        @foreach($chapters as $chapter)
-            <div class="chapter">
-                <h3>{{ $chapter->title }}</h3>
-                <div class="chapter-content">
-                    {!! nl2br($chapter->content) !!}
-                </div>
-            </div>
-        @endforeach
-    </div>
+    @if($copyrightChapter)
+        <div style="page-break-after: always;">
+            {!! $copyrightChapter->content !!}
+        </div>
+    @endif
+
+    @if($tableOfContentsChapter)
+        <div style="page-break-after: always;">
+            {!! $tableOfContentsChapter->content !!}
+        </div>
+    @endif
+
+    {{-- Regular Chapters (using PDF-compatible content from database) --}}
+    @foreach($regularChapters as $chapter)
+        <div style="page-break-inside: avoid; margin-bottom: 40px;">
+            {!! $chapter->content !!}
+        </div>
+    @endforeach
 
     {{-- Optional: Add Page Numbers --}}
     @if($project->add_page_num == 'Yes')
