@@ -283,45 +283,110 @@ class BookController extends Controller
 
         if ($project->format === 'Word') {
             $phpWord = new PhpWord();
+            
+            // Set page size to match PDF export (same as treem_size)
+            $sizeString = $project->treem_size;
+            if (preg_match('/([0-9\.]+)\"?\s*x\s*([0-9\.]+)\"?/i', $sizeString, $matches)) {
+                $widthInches = (float) $matches[1];
+                $heightInches = (float) $matches[2];
+                
+                // Convert inches to twips (1 inch = 1440 twips)
+                $widthTwips = $widthInches * 1440;
+                $heightTwips = $heightInches * 1440;
+                
+                // Set default page size for all sections
+                $sectionStyle = [
+                    'pageSizeW' => $widthTwips,
+                    'pageSizeH' => $heightTwips,
+                    'marginTop' => 720,    // 0.5 inch
+                    'marginBottom' => 720, // 0.5 inch  
+                    'marginLeft' => 720,   // 0.5 inch
+                    'marginRight' => 720,  // 0.5 inch
+                ];
+            } else {
+                // Fallback to 6x9 if parsing fails
+                $sectionStyle = [
+                    'pageSizeW' => 8640,  // 6 inches * 1440
+                    'pageSizeH' => 12960, // 9 inches * 1440
+                    'marginTop' => 720,
+                    'marginBottom' => 720,
+                    'marginLeft' => 720,
+                    'marginRight' => 720,
+                ];
+            }
+            
+            // Separate special sections from regular chapters (same as PDF export)
+            $specialSections = ['Book Introduction', 'Copyright Page', 'Table of Contents'];
+            $specialChapters = $chapters->whereIn('title', $specialSections);
+            $regularChapters = $chapters->whereNotIn('title', $specialSections);
+            
+            // Get specific special sections
+            $bookIntroChapter = $specialChapters->where('title', 'Book Introduction')->first();
+            $copyrightChapter = $specialChapters->where('title', 'Copyright Page')->first();
+            $tableOfContentsChapter = $specialChapters->where('title', 'Table of Contents')->first();
 
-            // --- Title Page ---
-            $titleSection = $phpWord->addSection(['breakType' => 'nextPage']);
+            // --- Title Page --- (consistent with PDF export)
+            $titleSection = $phpWord->addSection(array_merge($sectionStyle, ['breakType' => 'nextPage']));
             $titleSection->addText($project->title, ['name' => 'Arial', 'size' => 24, 'bold' => true], ['alignment' => 'center']);
-            $titleSection->addText($project->second_title, ['name' => 'Arial', 'size' => 18, 'italic' => true], ['alignment' => 'center']);
+            if ($project->second_title) {
+                $titleSection->addText($project->second_title, ['name' => 'Arial', 'size' => 18, 'italic' => true], ['alignment' => 'center']);
+            }
             $titleSection->addText("By: " . $project->author, ['name' => 'Arial', 'size' => 14], ['alignment' => 'center', 'spaceBefore' => 480]);
-            $titleSection->addText($project->description, ['name' => 'Arial', 'size' => 12], ['alignment' => 'justify', 'spaceBefore' => 240]);
-
-            // Set default font (will be overridden by HTML styling from editor)
-            // This is removed as per user request to respect editor styling
-            // $phpWord->setDefaultFontName($project->text_style);
-            // $phpWord->setDefaultFontSize($project->font_size);
-
-            // Add sections
-            if ($project->book_intro == 'Yes') {
-                $section = $phpWord->addSection();
-                $section->addTitle('Book Introduction', 1);
-                \PhpOffice\PhpWord\Shared\Html::addHtml($section, $project->book_intro);
+            if ($project->description) {
+                $titleSection->addText($project->description, ['name' => 'Arial', 'size' => 12], ['alignment' => 'center', 'spaceBefore' => 240]);
             }
 
-            if ($project->copyright_page == 'Yes') {
-                $section = $phpWord->addSection();
-                $section->addTitle('Copyright', 1);
-                \PhpOffice\PhpWord\Shared\Html::addHtml($section, $project->copyright_page);
+            // Add special sections using database content (same as PDF export)
+            if ($bookIntroChapter) {
+                $section = $phpWord->addSection(array_merge($sectionStyle, ['breakType' => 'nextPage']));
+                \PhpOffice\PhpWord\Shared\Html::addHtml($section, $bookIntroChapter->content);
             }
 
-            if ($project->table_of_contents == 'Yes') {
-                $section = $phpWord->addSection();
+            if ($copyrightChapter) {
+                $section = $phpWord->addSection(array_merge($sectionStyle, ['breakType' => 'nextPage']));
+                \PhpOffice\PhpWord\Shared\Html::addHtml($section, $copyrightChapter->content);
+            }
+
+            if ($tableOfContentsChapter) {
+                $section = $phpWord->addSection(array_merge($sectionStyle, ['breakType' => 'nextPage']));
+                
+                // Create proper Word TOC with dotted leaders and page numbers
                 $section->addTitle('Table of Contents', 1);
-                foreach ($chapters as $chapter) {
-                    $section->addListItem($chapter->title, 0);
+                $pageNum = 4; // Start after title page, intro, copyright
+                
+                // Add special sections to TOC with dotted leaders
+                if ($bookIntroChapter) {
+                    $textRun = $section->addTextRun(['tabs' => [new \PhpOffice\PhpWord\Style\Tab('right', 9360, 'dot')]]);
+                    $textRun->addText('Book Introduction');
+                    $textRun->addTab();
+                    $textRun->addText($pageNum);
+                    $pageNum++;
+                }
+                
+                if ($copyrightChapter) {
+                    $textRun = $section->addTextRun(['tabs' => [new \PhpOffice\PhpWord\Style\Tab('right', 9360, 'dot')]]);
+                    $textRun->addText('Copyright Page');
+                    $textRun->addTab();
+                    $textRun->addText($pageNum);
+                    $pageNum++;
+                }
+                
+                // Add regular chapters to TOC with dotted leaders and page numbers
+                foreach ($regularChapters as $index => $chapter) {
+                    $textRun = $section->addTextRun(['tabs' => [new \PhpOffice\PhpWord\Style\Tab('right', 9360, 'dot')]]);
+                    $textRun->addText($chapter->title);
+                    $textRun->addTab();
+                    $textRun->addText($pageNum);
+                    $pageNum++;
                 }
             }
 
-            foreach ($chapters as $chapter) {
-                $section = $phpWord->addSection();
-                $section->addTitle($chapter->title, 1);
+            // Add regular chapters using database content (same as PDF export)
+            foreach ($regularChapters as $chapter) {
+                $section = $phpWord->addSection(array_merge($sectionStyle, ['breakType' => 'nextPage']));
                 \PhpOffice\PhpWord\Shared\Html::addHtml($section, $chapter->content);
 
+                // Add page numbers if requested
                 if ($project->add_page_num == 'Yes') {
                     $footer = $section->addFooter();
                     $footer->addPreserveText('Page {PAGE} of {NUMPAGES}', null, ['alignment' => 'center']);
