@@ -350,33 +350,39 @@ class BookController extends Controller
             if ($tableOfContentsChapter) {
                 $section = $phpWord->addSection(array_merge($sectionStyle, ['breakType' => 'nextPage']));
                 
-                // Create proper Word TOC with dotted leaders and page numbers
+                // Create proper Word TOC with manual dotted leaders
                 $section->addTitle('Table of Contents', 1);
                 $pageNum = 4; // Start after title page, intro, copyright
                 
-                // Add special sections to TOC with dotted leaders
+                // Create a simple table for clean left-right alignment
+                $tableStyle = [
+                    'borderSize' => 0,
+                    'cellMargin' => 0,
+                    'width' => 5000
+                ];
+                
+                $table = $section->addTable($tableStyle);
+                
+                // Add special sections to TOC
                 if ($bookIntroChapter) {
-                    $textRun = $section->addTextRun(['tabs' => [new \PhpOffice\PhpWord\Style\Tab('right', 9360, 'dot')]]);
-                    $textRun->addText('Book Introduction');
-                    $textRun->addTab();
-                    $textRun->addText($pageNum);
+                    $table->addRow();
+                    $table->addCell(4500)->addText('Book Introduction', ['size' => 12]);
+                    $table->addCell(500, ['alignment' => 'right'])->addText($pageNum, ['size' => 12, 'bold' => true]);
                     $pageNum++;
                 }
                 
                 if ($copyrightChapter) {
-                    $textRun = $section->addTextRun(['tabs' => [new \PhpOffice\PhpWord\Style\Tab('right', 9360, 'dot')]]);
-                    $textRun->addText('Copyright Page');
-                    $textRun->addTab();
-                    $textRun->addText($pageNum);
+                    $table->addRow();
+                    $table->addCell(4500)->addText('Copyright Page', ['size' => 12]);
+                    $table->addCell(500, ['alignment' => 'right'])->addText($pageNum, ['size' => 12, 'bold' => true]);
                     $pageNum++;
                 }
                 
-                // Add regular chapters to TOC with dotted leaders and page numbers
+                // Add regular chapters to TOC
                 foreach ($regularChapters as $index => $chapter) {
-                    $textRun = $section->addTextRun(['tabs' => [new \PhpOffice\PhpWord\Style\Tab('right', 9360, 'dot')]]);
-                    $textRun->addText($chapter->title);
-                    $textRun->addTab();
-                    $textRun->addText($pageNum);
+                    $table->addRow();
+                    $table->addCell(4500)->addText($chapter->title, ['size' => 12]);
+                    $table->addCell(500, ['alignment' => 'right'])->addText($pageNum, ['size' => 12, 'bold' => true]);
                     $pageNum++;
                 }
             }
