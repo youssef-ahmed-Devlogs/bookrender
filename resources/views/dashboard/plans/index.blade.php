@@ -172,7 +172,14 @@
                     items: [{
                         priceId: button.dataset.priceId,
                         quantity: 1,
-                    }]
+                    }],
+                    customer: {
+                        email: "{{ auth()->user()->email }}"
+                    },
+                    customData: {
+                        user_id: "{{ auth()->id() }}",
+                        user_email: "{{ auth()->user()->email }}"
+                    }
                 });
             }
         </script>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use Illuminate\Support\Facades\Redirect;
 use ProtoneMedia\LaravelPaddle\Paddle;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -30,12 +31,11 @@ class PlanController extends Controller
 
     public function success()
     {
-
         return view('dashboard.plans.success');
     }
+
     public function failure()
     {
-
         return view('dashboard.plans.fail');
     }
 
@@ -104,7 +104,6 @@ class PlanController extends Controller
     {
         $user = Auth::user();
         $freePlan = Plan::where('is_free', '1')->first();
-
         if ($user) {
 
             $subscription = $user->subscriptions()->latest()->first();

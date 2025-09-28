@@ -4,9 +4,13 @@ use App\Http\Controllers\Dashboard\PlanController;
 use App\Http\Controllers\Dashboard\BookController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Frontend\FrontendController;
+use App\Http\Controllers\WebHookController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [FrontendController::class, 'index'])->name('home');
+
+// Paddle webhook callback (no auth required)
+Route::post('paddle/webhook', [WebHookController::class, 'paddleCallback'])->name('paddle.webhook');
 
 Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::middleware('auth', 'otp')->group(function () {

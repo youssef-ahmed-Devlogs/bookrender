@@ -19,6 +19,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'reached-maximum-books' => ReachedMaximumBooks::class,
             'otp' => OTP::class,
         ]);
+
+        $middleware->validateCsrfTokens(except: [
+            'paddle/webhook',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
