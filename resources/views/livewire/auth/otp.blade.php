@@ -32,11 +32,14 @@ new #[Layout('components.layouts.auth.app')] class extends Component {
 
         $user = auth()->user();
 
-        // if ($user->otp !== $this->otp || $user->otp_expired_at < now()) {
-        //     throw ValidationException::withMessages([
-        //         'otp' => 'This otp is invalid !',
-        //     ]);
-        // }
+        if (config('app.env') !== 'local') {
+            if ($user->otp !== $this->otp || $user->otp_expired_at < now()) {
+                throw ValidationException::withMessages([
+                    'otp' => 'This otp is invalid !',
+                ]);
+            }
+        }
+
 
         $user->otp = NULL;
         $user->otp_verified_at = now();
