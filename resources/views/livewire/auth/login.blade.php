@@ -98,7 +98,7 @@ new #[Layout('components.layouts.auth.app')] class extends Component {
                 <div class="">
                     <div class="logo d-flex mb-lg-4 mb-md-0">
                         <img src="{{ asset('assets/auth/images/logo.png') }}" alt="logo">
-                        <h4 class="pt-3 align-self-center ms-lg-2">CreateBook</h4>
+                        <h4 class="pt-3 align-self-center ms-lg-2">Bookrender</h4>
                     </div>
 
                     <h1 class="mt-3 mt-md-0">Login to your account</h1>

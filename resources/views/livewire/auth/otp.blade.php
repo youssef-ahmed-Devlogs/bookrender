@@ -67,7 +67,7 @@ new #[Layout('components.layouts.auth.app')] class extends Component {
                 <div class="">
                     <div class="logo d-flex mb-lg-4 mb-md-0">
                         <img src="{{ asset('assets/auth/images/logo.png') }}" alt="logo">
-                        <h4 class="pt-3 align-self-center ms-lg-2">CreateBook</h4>
+                        <h4 class="pt-3 align-self-center ms-lg-2">Bookrender</h4>
                     </div>
 
                     <h1 class="mt-3 mt-md-0">Enter OTP</h1>
@@ -86,6 +86,13 @@ new #[Layout('components.layouts.auth.app')] class extends Component {
                         @enderror
 
                         <button class="mt-3 main-btn">Submit</button>
+                    </form>
+
+                    <form method="POST" action="{{ route('logout') }}" class="mt-3">
+                        @csrf
+                        <button type="submit" class="btn btn-link p-0 text-decoration-underline">
+                            Cancel and log in again
+                        </button>
                     </form>
                 </div>
             </div>

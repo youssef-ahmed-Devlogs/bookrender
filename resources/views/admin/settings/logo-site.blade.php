@@ -43,7 +43,7 @@
                     <div class="mt-1 d-flex create_book">
                         <img src="{{ asset('storage/' . $logo->logo) }}" class="ms-3" alt="logo">
 
-                        <h4 class="mt-2 text-center me-0 me-md-5 align-self-center">CreateBook</h4>
+                        <h4 class="mt-2 text-center me-0 me-md-5 align-self-center">Bookrender</h4>
                     </div>
 
                     @error('site_logo')
@@ -63,7 +63,7 @@
                 </div>
                 <div class="mt-1 d-flex create_book2">
                     <img src="{{ asset('storage/' . $retinalogo->retinalogo) }}" class="ms-3" alt="logo">
-                    <h4 class="mt-2 text-center me-5 me-md-5 align-self-center ">CreateBook</h4>
+                    <h4 class="mt-2 text-center me-5 me-md-5 align-self-center ">Bookrender</h4>
                 </div>
 
                 @error('site_retinalogo')

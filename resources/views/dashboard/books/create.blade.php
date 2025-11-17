@@ -500,7 +500,7 @@
 
         <div class=" d-flex align-items-center create-font">
             <img src="{{ asset('assets/dashboard/images/group10000078533.png') }}" alt="logo" />
-            <h5 class="mt-1 text-white align-self-center pe-4"> CreateBook</h5>
+            <h5 class="mt-1 text-white align-self-center pe-4"> Bookrender</h5>
 
         </div>
 

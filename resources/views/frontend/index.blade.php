@@ -11,7 +11,7 @@
                         <div class="mt-3 icon-main d-flex align-items-center">
                             <img src="{{ $settings->logo ? asset($settings->logo) : asset('assets/common/images/logo.png') }}"
                                 class="me-3" alt="">
-                            <h4 class="text-center mt-md-1 me-5 me-md-5 ms-md-2">CreateBook</h4>
+                            <h4 class="text-center mt-md-1 me-5 me-md-5 ms-md-2">Bookrender</h4>
                         </div>
                         <div>
                             <a href="{{ route('dashboard.index') }}" class=" text-decoration-none">
