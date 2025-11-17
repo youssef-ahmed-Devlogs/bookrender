@@ -100,6 +100,11 @@
     @endpush
 
     <div class="p-4 modal-content rounded-4" style="width:80%;margin: 0 auto">
+        @if (session('error'))
+            <div class="mb-3 alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
         <div class="mb-3 d-flex justify-content-between align-items-center">
             <h3 class="m-0 text-center w-100" style="font-weight:600;">Subscription Plan</h3>
             <a href="{{ route('dashboard.index') }}" class="btn-close"></a>

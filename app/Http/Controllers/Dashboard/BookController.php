@@ -90,6 +90,14 @@ class BookController extends Controller
             $user = auth()->user();
             $bookService = new BookService();
 
+            // Ensure the user has an active subscription before generating anything
+            $subscription = $user->subscriptions()->latest()->first();
+
+            if (!$subscription || !$subscription->plan) {
+                return redirect()->route('dashboard.plans.index')
+                    ->with('error', 'You do not have an active subscription. Please select a plan before generating a book.');
+            }
+
             // Generate book content using the improved service
             $generatedContent = $bookService->generateBookContent($request->all());
 
@@ -105,7 +113,6 @@ class BookController extends Controller
             }
 
             // Check quota before creating the project
-            $subscription = $user->subscriptions->first();
             $wordLimit = $subscription->plan->word_number ?? 0;
             $usedWords = $subscription->used_words ?? 0;
             $remainingWords = $wordLimit - $usedWords;
