@@ -67,7 +67,7 @@
                 </div>
                 <div class="mb-2 col-lg-3 col-md-6 next-section-home mb-md-0 d-flex">
                     <img src="{{ asset('assets/frontend/images/group11.png') }}" alt="">
-                    <h5 class="align-self-center ms-2">Generate content and media with AI</h5>
+                    <h5 class="align-self-center ms-2">Custom templates for your book layout</h5>
                 </div>
             </div>
 

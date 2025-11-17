@@ -29,20 +29,20 @@
         <img src="{{ asset('assets/dashboard/images/group5.png') }}" alt="Subscription Information" />
         <p class="mb-3">Subscription Information</p>
     </a>
-    <a href="#" class="{{ request()->is('notifications*') ? 'active' : '' }}">
+    <!-- <a href="#" class="{{ request()->is('notifications*') ? 'active' : '' }}">
         <img src="{{ asset('assets/dashboard/images/group3.svg') }}" alt="Notifications" />
         <p class="mb-3">Notifications</p>
-    </a>
+    </a> -->
 
     <a href="{{ route('dashboard.help-center') }}"
         class="{{ request()->routeIs('dashboard.help-center') ? 'active' : '' }}">
         <img src="{{ asset('assets/dashboard/images/group6.png') }}" alt="Help Center" />
         <p class="mb-3">Help Center</p>
     </a>
-    <a href="#" class="{{ request()->is('settings*') ? 'active' : '' }}">
+    <!-- <a href="#" class="{{ request()->is('settings*') ? 'active' : '' }}">
         <img src="{{ asset('assets/dashboard/images/vector23.svg') }}" alt="Settings" />
         <p class="mb-3">Settings</p>
-    </a>
+    </a> -->
     <form action="{{ route('logout') }}" method="post">
         @csrf
         <button type="submit" onclick="preventDefault()" class="bg-transparent border-0 ">
