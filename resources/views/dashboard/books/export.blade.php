@@ -109,9 +109,9 @@
             page-break-before: auto;
         }
 
-        .chapter-content {
+        /* .chapter-content {
             text-align: left;
-        }
+        } */
 
         .footer {
             position: fixed;

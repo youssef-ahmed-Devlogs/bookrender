@@ -77,6 +77,39 @@
             }
         </style>
 
+        <!-- Locally neutralize global dashboard typography inside editor/preview only -->
+        <style>
+            
+            .page-preview .ql-editor,
+            .preview-area {
+                
+                color: initial;
+            }
+
+            .page-preview .ql-editor h1,
+            .page-preview .ql-editor h2,
+            .page-preview .ql-editor h3,
+            .page-preview .ql-editor h4,
+            .page-preview .ql-editor h5,
+            .page-preview .ql-editor p,
+            .preview-area h1,
+            .preview-area h2,
+            .preview-area h3,
+            .preview-area h4,
+            .preview-area h5,
+            .preview-area p {
+                font-size: initial;
+                
+                color: inherit;
+            }
+
+
+            .page-preview .ql-editor button,
+            .preview-area button {
+                color: inherit;
+            }
+        </style>
+
         @php
             $sizeMap = [
                 '5" x 8"' => ['w' => 480, 'h' => 768], // 96 px per inch approximation
@@ -90,18 +123,20 @@
 
         <style>
             body {
-                overflow: hidden;
+                /* overflow: hidden;  we need scrolling for the editor area and the preview area */
             }
 
             /* Dynamically scale editor / preview based on chosen Treem size */
             .page-preview {
-                width: {{ $dimensions['w'] }}px;
-                height: {{ $dimensions['h'] }}px;
+                /* this is page preview not editor area preview the tream sisze should be the same as the editor area not including the tools area */
+                 width: {{ $dimensions['w'] }}px; /* keep the width the same as the editor area */
+                /* height: {{ $dimensions['h'] }}px; */
                 border: 1px solid #e0e0e0;
                 background: #ffffff;
                 margin: 0 auto;
                 /* overflow-y: auto; */
                 box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
             }
 
             .page-preview .ql-editor {
@@ -110,7 +145,8 @@
                 height: {{ $dimensions['h'] . 'px'}}; */
                 overflow-y: auto;
                 padding: 20px 40px;
-                padding-bottom: 120px;
+                /* padding-bottom: 120px;  */
+                /*padding-bottom: 120px; 120px was is too much space for the text */
                 /* inner margin for text */
                 box-sizing: border-box;
                 background-color: #fff;
@@ -199,7 +235,10 @@
                     flex: 1;
                     /* height: {{ $dimensions['h'] . 'px'}}; */
                 }
-
+                #editor-container {
+                    /* width: {{ $dimensions['w'] }}px; ALREADY inherited from the preview page */
+                    height: {{ $dimensions['h'] }}px; 
+                }
             .sidebar-ai {
                     .buttons {
                     display: flex;
